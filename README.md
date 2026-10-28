@@ -28,7 +28,7 @@ Backend:
 Node.js
 Express.js
 Render (PostgreSQL Database)
-Firebase Auth (User Account Authorization) or Passport.js
+Firebase Auth (User Account Authorization) 
 
 ## Features
 
