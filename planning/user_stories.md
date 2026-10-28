@@ -5,6 +5,7 @@ Reference the Writing User Stories final project guide in the course portal for 
 ## Outline User Roles
 
 **Wordle Player**: a user who plays wordle puzzles
+
 **Wordle Creator**: a user who creates and shares unique puzzles for friends to play
 
 ## Draft User Stories

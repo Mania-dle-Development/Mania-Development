@@ -1,4 +1,4 @@
-# Wordle Mania
+# MANIA-dle
 
 CodePath WEB103 Final Project
 
@@ -21,14 +21,14 @@ Obvious inspiration came from NYT’s Wordle, however our unique gamemodes are i
 ## Tech Stack
 
 Frontend:
-React
-Javascript
+- React
+- Javascript
 
 Backend:
-Node.js
-Express.js
-Render (PostgreSQL Database)
-Firebase Auth (User Account Authorization) 
+- Node.js
+- Express.js
+- Render (PostgreSQL Database)
+- Firebase Auth (User Account Authorization) 
 
 ## Features
 
