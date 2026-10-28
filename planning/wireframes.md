@@ -4,18 +4,25 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 
 ## List of Pages
 
-[👉🏾👉🏾👉🏾 List the pages you expect to have in your app, with a ⭐ next to pages you have wireframed]
+- Landing Page 
+- ⭐Home Page (Post User Authenticated)
+- ⭐Profile Page (User Information)
+- Puzzle Creation Page
+- Browser 
+- Leaderboard
+- Classic Puzzle Page
+- Clock Puzzle Page
+- ⭐Switcharoo Puzzle Page
 
-## Wireframe 1: [page title]
+## Wireframe 1: [Switcharoo Puzzle Page]
 
-[👉🏾👉🏾👉🏾 include wireframe 1]
+https://ibb.co/bjDL10gK
 
-## Wireframe 2: [page title]
+## Wireframe 2: [Home Page]
 
-[👉🏾👉🏾👉🏾 include wireframe 2]
+https://ibb.co/PXycqwd
 
-## Wireframe 3: [page title]
+## Wireframe 3: [Profile Page]
 
-[👉🏾👉🏾👉🏾 include wireframe 3]
+https://ibb.co/xt3s57BF
 
-[👉🏾👉🏾👉🏾 include more wireframes as desired]
