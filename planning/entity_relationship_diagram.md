@@ -1,9 +1,6 @@
 # Entity Relationship Diagram
-
+![ERD Diagram.png](erd%20diagram/ERD%20Diagram.png)
 Reference the Creating an Entity Relationship Diagram final project guide in the course portal for more information about how to complete this deliverable.
-
-Reference: 
-https://dbdiagram.io/d/Mania-dle-Entity-Relationship-Diagram-6ad953eef65bbc60f6f9923b
 
 ## Create the List of Tables
 (Stylized as UPPERCASE in Database)

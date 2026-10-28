@@ -16,13 +16,13 @@ Reference the Creating an Entity Relationship Diagram final project guide in the
 
 ## Wireframe 1: [Switcharoo Puzzle Page]
 
-https://ibb.co/bjDL10gK
+![Switcharoo Wordle Solved.jpg](wireframes/Switcharoo%20Wordle%20Solved.jpg)
 
 ## Wireframe 2: [Home Page]
 
-https://ibb.co/PXycqwd
+![Landing (Post-Login).jpg](wireframes/Landing%20%28Post-Login%29.jpg)
 
 ## Wireframe 3: [Profile Page]
 
-https://ibb.co/xt3s57BF
+![Profile.jpg](wireframes/Profile.jpg)
 
