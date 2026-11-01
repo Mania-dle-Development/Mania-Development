@@ -40,11 +40,11 @@
 | -------------- | ------------ | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | solver_id      | UUID         | Primary Key, <br/>Foreign Key, <br/>NOT NULL | User id of the user that solved the wordle                                                                                                         |
 | wordle_id      | int          | Primary Key, <br/>Foreign Key, <br/>NOT NULL | The id of the associated wordle                                                                                                                    |
+| mode | ENUM solves_mode (`classic`, `clock`, `switcharoo`) | Primary Key, <br/>NOT NULL | What mode the wordle was played in |
 | started_at     | timestamp    | NOT NULL                                     | Datetime of when the user started the wordle; used for tracking streaks; the total time it took the user to solve a Clock mode wordle is computed on server side using the solved_at field and started_at field                                                                            |
 | solved_at      | timestamp    | NULL                                         | Datetime of when the user solved the wordle; marked as `NULL` if game is lost; the total time it took the user to solve a Clock mode wordle is computed on server side using the solved_at field and started_at field                                                                      |
 | num_of_guesses | int          | NOT NULL                                     | The number of guesses it took the user to solve the wordle                                                                                         |
 | switched_word  | varchar(255) | NULL                                         | The anagram that the solution was switched to during the game. This is set to `NULL` if the user solves the wordle before Switcharoo is activated. | 
-| mode | ENUM solves_mode (`classic`, `clock`, `switcharoo`) | NOT NULL | What mode the wordle was played in |
 
 ## Database Relationships
 
