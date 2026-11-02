@@ -11,7 +11,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "npx nodemon server.js"
+    "start": "nodemon --require dotenv/config server.js"
   },
   "keywords": [],
   "author": "",
