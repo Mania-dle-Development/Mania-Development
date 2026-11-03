@@ -9,7 +9,8 @@ function App() {
 
   return (
     <>
-    
+      <h1 className="font-pixel"> Mania-dle </h1>
+      <div className="text-secondary-pink"> Hello there! </div>
     </>
   )
 }
