@@ -111,32 +111,37 @@ const sampleSolves = [
 
 // seed database
 const seedDatabase = async () => {
-    const userIds = {}
-    for (const username of sampleUsers) {
-        const { rows } = await pool.query(
-            'INSERT INTO users (username) VALUES ($1) RETURNING id',
-            [username]
-        )
-        userIds[username] = rows[0].id
-    }
+    try {
+        const userIds = {}
+        for (const username of sampleUsers) {
+            const { rows } = await pool.query(
+                'INSERT INTO users (username) VALUES ($1) RETURNING id',
+                [username]
+            )
+            userIds[username] = rows[0].id
+        }
 
-    const wordleIds = {}
-    for (const { word, creator } of sampleWordles) {
-        const { rows } = await pool.query(
-            `INSERT INTO wordles (word, creator_id, mode, valid_anagrams) VALUES ($1, $2, 'classic', '{}') RETURNING id`,
-            [word, userIds[creator]]
-        )
-        wordleIds[word] = rows[0].id
-    }
+        const wordleIds = {}
+        for (const { word, creator } of sampleWordles) {
+            const { rows } = await pool.query(
+                `INSERT INTO wordles (word, creator_id, mode, valid_anagrams) VALUES ($1, $2, 'classic', '{}') RETURNING id`,
+                [word, userIds[creator]]
+            )
+            wordleIds[word] = rows[0].id
+        }
 
-    for (const { solver, word, startedAt, solvedAt, guesses } of sampleSolves) {
-        await pool.query(
-            `INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses) VALUES ($1, $2, 'classic', $3, $4, $5)`,
-            [userIds[solver], wordleIds[word], startedAt, solvedAt, guesses]
-        )
-    }
+        for (const { solver, word, startedAt, solvedAt, guesses } of sampleSolves) {
+            await pool.query(
+                `INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses) VALUES ($1, $2, 'classic', $3, $4, $5)`,
+                [userIds[solver], wordleIds[word], startedAt, solvedAt, guesses]
+            )
+        }
 
-    console.log('Database seeded successfully.')
+        console.log('Database seeded successfully.')
+    } catch (error) {
+        console.error("Error:" + error);
+        throw error;
+    }
 }
 
 //Call SQL Queries
