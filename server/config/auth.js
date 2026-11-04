@@ -12,7 +12,6 @@ const verify = async (accessToken, refreshToken, profile, callback) => {
 		_json: { id, name, login, avatar_url },
 	} = profile;
 	const userData = {
-		githubId: id,
 		username: login,
 		avatarUrl: avatar_url,
 		accessToken,
@@ -25,10 +24,10 @@ const verify = async (accessToken, refreshToken, profile, callback) => {
 
 		if (!user) {
 			const results = await pool.query(
-				`INSERT INTO users (id, username, avatar, access_token)
-        VALUES($1, $2, $3, $4)
+				`INSERT INTO users (username, avatar, access_token)
+        VALUES($1, $2, $3)
         RETURNING *`,
-				[userData.githubId, userData.username, userData.avatar, accessToken],
+				[userData.username, userData.avatar, accessToken],
 			);
 
 			const newUser = results.rows[0];
