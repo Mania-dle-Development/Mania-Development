@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
 			setLoading(true);
 			setError({ status: false, message: "" });
 			try {
+				// checks to see if the user is authenticated
 				const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login/success`, {
 					credentials: "include",
 				});
@@ -25,11 +26,12 @@ export function AuthProvider({ children }) {
 		getUser();
 	}, []);
 
+	// logs the user out and redirects them to login page
 	const logout = async () => {
 		const url = `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`;
 		const response = await fetch(url, { credentials: "include" });
 		await response.json();
-		window.location.href = "/";
+		window.location.href = "/login";
 	};
 
 	const value = {

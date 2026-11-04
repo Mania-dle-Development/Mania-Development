@@ -6,6 +6,7 @@ function App() {
 
 	if (loading) return <div>Loading...</div>;
 
+	// if user isn't logged in, navigate them to login page
 	if (!user) {
 		return <Navigate to="/login" replace />;
 	}

@@ -1,12 +1,14 @@
 import GitHubStrategy from "passport-github2";
 import { pool } from "./database.js";
 
+// GitHub Strategy Config
 const options = {
 	clientID: process.env.GITHUB_CLIENT_ID,
 	clientSecret: process.env.GITHUB_CLIENT_SECRET,
 	callbackURL: process.env.GITHUB_CALLBACK_URL,
 };
 
+// verify callback function
 const verify = async (accessToken, refreshToken, profile, callback) => {
 	const {
 		_json: { id, login, avatar_url },
@@ -17,11 +19,14 @@ const verify = async (accessToken, refreshToken, profile, callback) => {
 		avatarUrl: avatar_url,
 	};
 	try {
+		// finds if the user in the database based on their github id
+		// not great to use username b/c it can be easily updated and changed
 		const results = await pool.query("SELECT * FROM users WHERE github_id = $1", [
 			userData.githubId,
 		]);
 		const user = results.rows[0];
 
+		// if the user has not logged into the app before, insert their info into the database
 		if (!user) {
 			const results = await pool.query(
 				`INSERT INTO users (username, avatar, github_id)

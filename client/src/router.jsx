@@ -10,6 +10,7 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				element: <AuthLayout />,
+				// protected routes
 				children: [
 					{ index: true, element: <p>Landing Page</p> },
 					{ path: "test", element: <p>Test Protected Route</p> },
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
 			},
 		],
 	},
+	// non-protected routes
 	{
 		path: "/login",
 		element: <Login />,
