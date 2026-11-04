@@ -77,4 +77,4 @@ List each issue you completed this unit and the main file or folder where that w
 
 List each feature you completed and checked off in readme.md this unit, one per line:
 
-- User Authentication (backend implementation with a placeholder login page)
+- User Authentication (backend implementation with a placeholder login page) - https://youtu.be/muLqSyvMFzs
