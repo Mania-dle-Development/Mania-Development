@@ -13,8 +13,7 @@ const createUserTableQuery = `CREATE TABLE users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         username VARCHAR(255) NOT NULL UNIQUE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-        avatar TEXT,
-        access_token TEXT DEFAULT NULL
+        avatar TEXT
     );
     `;
 
