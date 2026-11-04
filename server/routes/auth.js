@@ -5,8 +5,10 @@ const router = express.Router();
 
 router.get("/login/success", (req, res) => {
 	if (req.user) {
-		res.status(200).json({ success: true, user: req.user });
+		return res.status(200).json({ success: true, user: req.user });
 	}
+
+	res.status(401).json({ success: false, message: "Not authenticated" });
 });
 
 router.get("/login/failed", (req, res) => {

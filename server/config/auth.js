@@ -14,7 +14,6 @@ const verify = async (accessToken, refreshToken, profile, callback) => {
 	const userData = {
 		username: login,
 		avatarUrl: avatar_url,
-		accessToken,
 	};
 	try {
 		const results = await pool.query("SELECT * FROM users WHERE username = $1", [
@@ -24,10 +23,10 @@ const verify = async (accessToken, refreshToken, profile, callback) => {
 
 		if (!user) {
 			const results = await pool.query(
-				`INSERT INTO users (username, avatar, access_token)
-        VALUES($1, $2, $3)
+				`INSERT INTO users (username, avatar)
+        VALUES($1, $2)
         RETURNING *`,
-				[userData.username, userData.avatar, accessToken],
+				[userData.username, userData.avatarUrl],
 			);
 
 			const newUser = results.rows[0];
