@@ -12,7 +12,7 @@ const createEnumQuery =
 
 const createUserTableQuery =
     `CREATE TABLE users (
-        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         username VARCHAR(255) NOT NULL UNIQUE ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now() ,
         avatar TEXT
@@ -24,7 +24,7 @@ const createWordlesTableQuery =
         id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         word VARCHAR(255) NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now() , 
-        creator_id INT NOT NULL,
+        creator_id UUID NOT NULL,
         mode game_mode NOT NULL DEFAULT 'all',
         valid_anagrams VARCHAR(255)[] NOT NULL,
     
@@ -37,7 +37,7 @@ const createWordlesTableQuery =
 
 const createSolvesTableQuery =
     `CREATE TABLE solves (
-        solver_id INT NOT NULL,
+        solver_id UUID NOT NULL,
         wordle_id INT NOT NULL,
         mode game_mode NOT NULL,
         started_at TIMESTAMPTZ NOT NULL,
@@ -80,16 +80,69 @@ const createUserTable = async () => {
         
         CREATE INDEX idx_solves_wordle_id ON solves(wordle_id);
        `
-    //console.log(queryBody)
 
     try {
         const response = await pool.query(queryBody);
         console.log("Tables created successfully.");
     } catch (error) {
         console.error("Error:" + error);
+        throw error;
     }
 }
 
+// sample data
+const sampleUsers = ['jay', 'vanessa', 'phil', 'eve', 'christian']
 
-//Call SQL Query
-createUserTable();
+const sampleWordles = [
+    { word: 'crane', creator: 'jay' },
+    { word: 'light', creator: 'vanessa' },
+    { word: 'trace', creator: 'phil' },
+    { word: 'acorn', creator: 'eve' },
+    { word: 'adopt', creator: 'christian' },
+]
+
+const sampleSolves = [
+    { solver: 'vanessa', word: 'crane', startedAt: '2026-11-01T10:00:00Z', solvedAt: '2026-11-01T10:03:20Z', guesses: 4 },
+    { solver: 'phil', word: 'light', startedAt: '2026-11-01T11:00:00Z', solvedAt: '2026-11-01T11:01:15Z', guesses: 3 },
+    { solver: 'eve', word: 'trace', startedAt: '2026-11-01T14:30:00Z', solvedAt: '2026-11-01T14:34:45Z', guesses: 5 },
+    { solver: 'christian', word: 'acorn', startedAt: '2026-11-02T09:00:00Z', solvedAt: '2026-11-02T09:02:10Z', guesses: 2 },
+    { solver: 'jay', word: 'adopt', startedAt: '2026-11-02T16:15:00Z', solvedAt: '2026-11-02T16:20:30Z', guesses: 6 },
+]
+
+// seed database
+const seedDatabase = async () => {
+    const userIds = {}
+    for (const username of sampleUsers) {
+        const { rows } = await pool.query(
+            'INSERT INTO users (username) VALUES ($1) RETURNING id',
+            [username]
+        )
+        userIds[username] = rows[0].id
+    }
+
+    const wordleIds = {}
+    for (const { word, creator } of sampleWordles) {
+        const { rows } = await pool.query(
+            `INSERT INTO wordles (word, creator_id, mode, valid_anagrams) VALUES ($1, $2, 'classic', '{}') RETURNING id`,
+            [word, userIds[creator]]
+        )
+        wordleIds[word] = rows[0].id
+    }
+
+    for (const { solver, word, startedAt, solvedAt, guesses } of sampleSolves) {
+        await pool.query(
+            `INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses) VALUES ($1, $2, 'classic', $3, $4, $5)`,
+            [userIds[solver], wordleIds[word], startedAt, solvedAt, guesses]
+        )
+    }
+
+    console.log('Database seeded successfully.')
+}
+
+//Call SQL Queries
+const resetDatabase = async () => {
+    await createUserTable()
+    await seedDatabase()
+}
+
+resetDatabase()
