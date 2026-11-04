@@ -27,8 +27,8 @@ function App() {
 			path: "/",
 			element:
 				user && user.id ? (
-					<div>
-						<h1>Mania-dle</h1>
+					<div className="text-center">
+						<h1 className="text-4xl font-sans">Mania-dle</h1>
 						<button onClick={logout} className="px-4 py-2 rounded-2xl bg-primary-blue">
 							Logout
 						</button>
