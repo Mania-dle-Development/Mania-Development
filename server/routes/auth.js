@@ -7,12 +7,11 @@ router.get("/login/success", (req, res) => {
 	if (req.user) {
 		return res.status(200).json({ success: true, user: req.user });
 	}
-
-	res.status(401).json({ success: false, message: "Not authenticated" });
+	res.status(401).json({ success: false, message: "User not authenticated" });
 });
 
 router.get("/login/failed", (req, res) => {
-	res.status(401).json({ success: true, message: "failure" });
+	res.status(401).json({ success: true, message: "Login Failed" });
 });
 
 router.get("/logout", (req, res, next) => {

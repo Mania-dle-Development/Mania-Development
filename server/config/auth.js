@@ -9,24 +9,25 @@ const options = {
 
 const verify = async (accessToken, refreshToken, profile, callback) => {
 	const {
-		_json: { id, name, login, avatar_url },
+		_json: { id, login, avatar_url },
 	} = profile;
 	const userData = {
+		githubId: id,
 		username: login,
 		avatarUrl: avatar_url,
 	};
 	try {
-		const results = await pool.query("SELECT * FROM users WHERE username = $1", [
-			userData.username,
+		const results = await pool.query("SELECT * FROM users WHERE github_id = $1", [
+			userData.githubId,
 		]);
 		const user = results.rows[0];
 
 		if (!user) {
 			const results = await pool.query(
-				`INSERT INTO users (username, avatar)
-        VALUES($1, $2)
+				`INSERT INTO users (username, avatar, github_id)
+        VALUES($1, $2, $3)
         RETURNING *`,
-				[userData.username, userData.avatarUrl],
+				[userData.username, userData.avatarUrl, userData.githubId],
 			);
 
 			const newUser = results.rows[0];
