@@ -1,4 +1,4 @@
-# MANIA-dle
+# Mania-dle
 
 CodePath WEB103 Final Project
 
@@ -28,10 +28,17 @@ Backend:
 - Node.js
 - Express.js
 - Render (PostgreSQL Database)
-- Firebase Auth (User Account Authorization) 
+- Passport.js (User Account Authorization) 
 
 ## Features
 
+### User Authentication
+
+Users can login and out of the app using their GitHub account. If times permits, more SSO will be implemented.
+
+[![User Authentication Vid](https://img.youtube.com/vi/muLqSyvMFzs/0.jpg)](https://www.youtube.com/watch?v=muLqSyvMFzs)
+
+ 
 ### Classic Wordle
 
 The original game of Wordle. A player tries to find an n-letter word (n being a positive integer) by trial and error. Each guess gives the player clues (what letters are in the word, the correct position of each valid letter, etc). Using these clues, they have to solve the puzzle in (n+1) rounds.
@@ -76,7 +83,7 @@ A timed version of Wordle with two options. Stopwatch Mode times how fast you so
 
 [gif goes here]
 
-### Switcheroo Mode
+### Switcharoo Mode
 
 Classic Wordle with a twist. At some point during the game, the answer shuffles into an anagram of itself (for example, EARTH becomes HEART). The screen shows "Switcharoo!" when it happens. The game still has a total of 6 rounds.
 
