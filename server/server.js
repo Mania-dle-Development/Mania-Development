@@ -3,6 +3,7 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import { GitHub } from "./config/auth.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
 
@@ -38,6 +39,8 @@ passport.deserializeUser((user, done) => {
 app.get("/", (req, res) => {
 	res.status(200).send('<h1 style="text-align: center; margin-top: 50px;"> Mania-dle </h1>');
 });
+
+app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
 
