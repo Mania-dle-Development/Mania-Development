@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.js";
 const app = express();
 
 app.use(express.json());
+// set up session middleware
 app.use(
 	session({
 		secret: process.env.SESSION_SECRET,
@@ -15,6 +16,8 @@ app.use(
 		saveUninitialized: true,
 	}),
 );
+
+// set up cors middleware
 app.use(
 	cors({
 		origin: process.env.FRONTEND_URL,
@@ -23,15 +26,16 @@ app.use(
 	}),
 );
 
+// set up passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(GitHub);
 
+// set up session support in passport
 passport.serializeUser((user, done) => {
 	const { access_token, ...sessionUser } = user;
 	done(null, sessionUser);
 });
-
 passport.deserializeUser((user, done) => {
 	done(null, user);
 });
@@ -40,6 +44,7 @@ app.get("/", (req, res) => {
 	res.status(200).send('<h1 style="text-align: center; margin-top: 50px;"> Mania-dle </h1>');
 });
 
+// auth-related routes
 app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 3000;
