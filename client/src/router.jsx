@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 
 export const router = createBrowserRouter([
 	{
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
 	// non-protected routes without sidebar menu (login page, landing page)
 	{
 		path: "/",
-		element: <p className="px-55 bg-primary-blue min-h-screen min-w-screen">Landing Page</p>,
+		element: <LandingPage />,
 	},
 	{
 		path: "/login",
