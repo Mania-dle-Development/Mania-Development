@@ -1,18 +1,13 @@
-import { Outlet, Navigate } from "react-router";
-import { useAuth } from "./contexts/AuthContext";
-import LoadingState from "./components/LoadingState";
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { RouterProvider } from "react-router";
+import { router } from "./router.jsx";
 
 function App() {
-	const { user, loading } = useAuth();
-
-	if (loading) return <LoadingState />;
-
-	// if user isn't logged in, navigate them to login page
-	if (!user) {
-		return <Navigate to="/login" replace />;
-	}
-
-	return <Outlet />;
+	return (
+		<AuthProvider>
+			<RouterProvider router={router} />
+		</AuthProvider>
+	);
 }
 
 export default App;
