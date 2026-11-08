@@ -1,7 +1,9 @@
 import Header from "../components/Header.jsx";
+import { useNavigate } from "react-router";
 
 export default function Login() {
 	const AUTH_URL = `${import.meta.env.VITE_BACKEND_URL}/api/auth/github`;
+	const navigate = useNavigate();
 	return (
 		<main className="bg-[#0283B3] min-h-screen min-w-screen">
 			<title>Login | Mania-dle</title>
@@ -15,7 +17,10 @@ export default function Login() {
 								Login in with Github
 							</button>
 						</a>
-						<button className="w-132 h-25 rounded-[1.25rem] inline-block text-[2.75rem] border-[#001428] border-4 bg-white hover:bg-[#dadada] text-white hover:text-[#dadada] font-sans cursor-pointer">
+						<button
+							onClick={() => navigate("/")}
+							className="w-132 h-25 rounded-[1.25rem] inline-block text-[2.75rem] border-[#001428] border-4 bg-white hover:bg-[#dadada] text-white hover:text-[#dadada] font-sans cursor-pointer"
+						>
 							<span className="[-webkit-text-stroke:8px_#001428] [paint-order:stroke_fill]">
 								Play as Guest
 							</span>

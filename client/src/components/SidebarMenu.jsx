@@ -8,7 +8,7 @@ import CustomWordleIcon from "../assets/custom-wordle-icon.svg";
 import ProfileIcon from "../assets/profile-icon.svg";
 
 export default function SidebarMenu() {
-	const { logout } = useAuth();
+	const { user, logout } = useAuth();
 	return (
 		<div className="absolute top-1/2 left-5 -translate-y-1/2 z-10 bg-[#0014280D] p-4 rounded-[6.25rem]">
 			<div className="flex flex-col gap-2.5 items-center">
@@ -55,14 +55,16 @@ export default function SidebarMenu() {
 					</button>
 				</div>
 				{/* exit / logout */}
-				<div className="bg-[linear-gradient(0deg,#FFF,#FFF),linear-gradient(0deg,rgba(97,224,95,0.05),rgba(97,224,95,0.05))] p-2.5 rounded-full">
-					<button
-						onClick={logout}
-						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(97,224,95,0.15),rgba(97,224,95,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(97,224,95,0.3),rgba(97,224,95,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
-					>
-						<img src={LogoutIcon} />
-					</button>
-				</div>
+				{user && (
+					<div className="bg-[linear-gradient(0deg,#FFF,#FFF),linear-gradient(0deg,rgba(97,224,95,0.05),rgba(97,224,95,0.05))] p-2.5 rounded-full">
+						<button
+							onClick={logout}
+							className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(97,224,95,0.15),rgba(97,224,95,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(97,224,95,0.3),rgba(97,224,95,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
+						>
+							<img src={LogoutIcon} />
+						</button>
+					</div>
+				)}
 			</div>
 		</div>
 	);
