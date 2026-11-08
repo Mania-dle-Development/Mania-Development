@@ -1,30 +1,38 @@
 import { createBrowserRouter } from "react-router";
-import App from "./App";
-import AuthLayout from "./layouts/AuthLayout";
+import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export const router = createBrowserRouter([
 	{
-		path: "/",
-		element: <App />,
+		element: <AppLayout />,
 		children: [
 			{
-				element: <AuthLayout />,
+				element: <ProtectedRoute />,
 				// protected routes
 				children: [
-					{ index: true, element: <p>Landing Page</p> },
+					{ path: "profile", element: <div className="px-55">Profile Page</div> },
 					{ path: "test", element: <p>Test Protected Route</p> },
 				],
 			},
+			// non-protected routes with sidebar menu (pages accessible to guest)
+			{
+				path: "non-protected",
+				element: <div className="px-55">Non-Protected Page with Sidebar Menu</div>,
+			},
 		],
 	},
-	// non-protected routes
+	// non-protected routes without sidebar menu (login page, landing page)
+	{
+		path: "/",
+		element: <p className="px-55 bg-primary-blue min-h-screen min-w-screen">Landing Page</p>,
+	},
 	{
 		path: "/login",
 		element: <Login />,
 	},
 	{
 		path: "*",
-		element: <div>404 Not Found</div>,
+		element: <div className="px-55">404 Not Found</div>,
 	},
 ]);
