@@ -61,16 +61,14 @@ export default function SidebarMenu() {
 					</button>
 				</div>
 				{/* exit / logout */}
-				{user && (
-					<div className="bg-[linear-gradient(0deg,#FFF,#FFF),linear-gradient(0deg,rgba(97,224,95,0.05),rgba(97,224,95,0.05))] p-2.5 rounded-full">
-						<button
-							onClick={logout}
-							className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(97,224,95,0.15),rgba(97,224,95,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(97,224,95,0.3),rgba(97,224,95,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
-						>
-							<img src={LogoutIcon} />
-						</button>
-					</div>
-				)}
+				<div className="bg-[linear-gradient(0deg,#FFF,#FFF),linear-gradient(0deg,rgba(97,224,95,0.05),rgba(97,224,95,0.05))] p-2.5 rounded-full">
+					<button
+						onClick={user ? logout : () => navigate("/login")}
+						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(97,224,95,0.15),rgba(97,224,95,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(97,224,95,0.3),rgba(97,224,95,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
+					>
+						<img src={LogoutIcon} />
+					</button>
+				</div>
 			</div>
 		</div>
 	);
