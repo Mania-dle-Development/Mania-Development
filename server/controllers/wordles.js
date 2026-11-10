@@ -73,6 +73,17 @@ export const submitGuess = async (req, res) => {
             game.status = "lost"
         }
 
+
+        // Inserting a user's attempt in the database, win or lose.
+        if(game.status !== "playing") {
+            await pool.query(
+                `INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses)
+                VALUES ($1, $2, 'classic', $3, $4, $5)
+                ON CONFLICT (solver_id, wordle_id, mode) DO NOTHING`,
+                [req.user.id, game.wordleId, game.startedAt, new Date(), won ? game.guesses.length : MAX_GUESSES + 1]
+            )
+        }
+
         const response = { result, status: game.status }
         if(game.status !== "playing") {
             response.answer = game.answer
