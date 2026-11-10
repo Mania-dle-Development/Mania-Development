@@ -21,6 +21,10 @@ export const router = createBrowserRouter([
 				path: "non-protected",
 				element: <div className="px-55">Non-Protected Page with Sidebar Menu</div>,
 			},
+			{
+				path: "*",
+				element: <div className="px-55">404 Not Found</div>,
+			},
 		],
 	},
 	// non-protected routes without sidebar menu (login page, landing page)
@@ -31,9 +35,5 @@ export const router = createBrowserRouter([
 	{
 		path: "/login",
 		element: <Login />,
-	},
-	{
-		path: "*",
-		element: <div className="px-55">404 Not Found</div>,
 	},
 ]);
