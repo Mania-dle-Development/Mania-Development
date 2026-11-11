@@ -5,17 +5,26 @@ const MAX_GUESSES = 6
 
 export const getRandomClassicWordle = async (req, res) => {
     try {
+        // pick a random classic wordle this user hasn't played yet
         const { rows } = await pool.query(
-            `SELECT id, word FROM wordles
+            `SELECT id, word FROM wordles w
             WHERE mode IN ('classic', 'all')
+              AND NOT EXISTS (
+                  SELECT 1 FROM solves s
+                  WHERE s.wordle_id = w.id
+                    AND s.solver_id = $1
+                    AND s.mode = 'classic'
+              )
             ORDER BY random()
             LIMIT 1
             `,
+            [req.user.id]
         )
         const wordle = rows[0]
 
+        // empty result = they've already played every classic wordle
         if(!wordle) {
-            res.status(404).json( { error: "No Wordle found" })
+            res.status(404).json( { error: "You've played every classic wordle!" })
             return
         }
 
