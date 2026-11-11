@@ -12,6 +12,11 @@
   /* text color */
   --color-text: #041427;
 
+  /* board + tiles */
+  --color-board: #f1f2f4;       /* gray center column */
+  --color-tile-empty: #d1d5d9;  /* empty tile fill */
+  --color-tile-absent: #3a4a5c; /* gray-out tile/key */
+
   /* font family */
   --font-pixel: "Pixelify Sans", sans-serif;
   --font-sans: "Gabarito", sans-serif; 
