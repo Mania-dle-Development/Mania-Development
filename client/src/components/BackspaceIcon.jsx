@@ -1,4 +1,4 @@
-// this is the backspace icon on the keyboard. imported from the Figma wireframe as an SVG.
+// this is the backspace icon on the keyboard, drew out based on the Figma wireframe as an SVG.
 
 export default function BackspaceIcon({ className = "" }) {
 	return (
