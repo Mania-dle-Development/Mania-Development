@@ -14,10 +14,17 @@ export default function useWordle() {
     const [error, setError] = useState("")
     const [submitting, setSubmitting] = useState(false)
 
+    // error checking
+    useEffect(() => {
+        if (!error) return
+            const timer = setTimeout(() => setError(""), 2000)  // message lasts for only 2 seconds
+            return () => clearTimeout(timer)
+    }, [error])
+
     // start up a game when the page loads
     useEffect(() => {
-        let ignore = false
-
+        let ignore = false   
+                
         const startGame = async () => {
             try {
                 const res = await fetch(`${API}/random`, { credentials: "include" })
