@@ -55,7 +55,7 @@ export default function Keyboard({ onKey, keyStatuses, disabled }) {
 						<button
 							onClick={press("Enter")}
 							disabled={disabled}
-							className={`${BASE} ${YELLOW_EDGE} px-3 text-xs text-white bg-secondary-pink ${pressedClass("Enter")}`}
+							className={`${BASE} ${YELLOW_EDGE} cursor-pointer px-3 text-xs text-white bg-secondary-pink ${pressedClass("Enter")}`}
 						>
 							Enter
 						</button>
@@ -66,7 +66,7 @@ export default function Keyboard({ onKey, keyStatuses, disabled }) {
 							key={letter}
 							onClick={press(letter)}
 							disabled={disabled}
-							className={`${BASE} ${DARK_EDGE} flex-1 max-w-12 text-lg ${KEY_STYLES[keyStatuses[letter] ?? "unused"]} ${pressedClass(letter)}`}
+							className={`${BASE} ${DARK_EDGE} cursor-pointer flex-1 max-w-12 text-lg ${KEY_STYLES[keyStatuses[letter] ?? "unused"]} ${pressedClass(letter)}`}
 						>
 							{letter}
 						</button>
@@ -77,7 +77,7 @@ export default function Keyboard({ onKey, keyStatuses, disabled }) {
 							onClick={press("Backspace")}
 							disabled={disabled}
 							aria-label="Backspace"
-							className={`${BASE} ${YELLOW_EDGE} px-3 text-white bg-secondary-pink ${pressedClass("Backspace")}`}
+							className={`${BASE} ${YELLOW_EDGE} cursor-pointer px-3 text-white bg-secondary-pink ${pressedClass("Backspace")}`}
 						>
 							<BackspaceIcon className="w-7 h-5" />
 						</button>
