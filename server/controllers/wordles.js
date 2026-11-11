@@ -3,7 +3,7 @@ import { VALID_GUESSES, scoreGuess } from '../utils/words.js'
 
 const MAX_GUESSES = 6
 
-export const getRandomWordle = async (req, res) => {
+export const getRandomClassicWordle = async (req, res) => {
     try {
         const { rows } = await pool.query(
             `SELECT id, word FROM wordles
@@ -80,7 +80,7 @@ export const submitGuess = async (req, res) => {
                 `INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses)
                 VALUES ($1, $2, 'classic', $3, $4, $5)
                 ON CONFLICT (solver_id, wordle_id, mode) DO NOTHING`,
-                [req.user.id, game.wordleId, game.startedAt, new Date(), won ? game.guesses.length : MAX_GUESSES + 1]
+                [req.user.id, game.wordleId, game.startedAt, won ? new Date() : null, game.guesses.length]
             )
         }
 
