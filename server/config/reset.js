@@ -40,7 +40,7 @@ const createSolvesTableQuery = `CREATE TABLE solves (
         wordle_id INT NOT NULL,
         mode game_mode NOT NULL,
         started_at TIMESTAMPTZ NOT NULL,
-        solved_at TIMESTAMPTZ NOT NULL,
+        solved_at TIMESTAMPTZ,
         num_of_guesses INTEGER NOT NULL,
         switched_word VARCHAR(255),
 

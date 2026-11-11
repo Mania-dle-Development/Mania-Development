@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/Login";
+import ClassicWordle from "./pages/ClassicWordle";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import CreateWordle from "./pages/CreateWordle";
@@ -19,6 +20,8 @@ export const router = createBrowserRouter([
 					{ path: "create", element: <CreateWordle /> },
 				],
 			},
+			// game pages: guests can play, only logged-in users' solves are saved
+			{ path: "classic", element: <ClassicWordle /> },
 			// non-protected routes with sidebar menu (pages accessible to guest)
 			{
 				path: "non-protected",

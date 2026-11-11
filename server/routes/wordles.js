@@ -6,6 +6,8 @@ import {
 	createWordle,
 	updateWordle,
 	deleteWordle,
+	getRandomClassicWordle,
+	submitGuess,
 } from "../controllers/wordles.js";
 
 const router = express.Router();
@@ -16,10 +18,14 @@ const requireLogin = (req, res, next) => {
 	res.status(401).json({ error: "You need to log in first." });
 };
 
+// these must come before /:id
+router.get("/random", getRandomClassicWordle); // open to guests; only logged-in solves are saved
+router.get("/mine", requireLogin, getMyWordles);
+
 router.get("/", getWordles);
-router.get("/mine", requireLogin, getMyWordles); // must come before /:id
 router.get("/:id", getWordleById);
 router.post("/", requireLogin, createWordle);
+router.post("/:id/guesses", submitGuess);
 router.patch("/:id", requireLogin, updateWordle);
 router.delete("/:id", requireLogin, deleteWordle);
 

@@ -1,4 +1,4 @@
-import Tile from "./Tile.jsx";
+import LandingPageTile from "./LandingPageTile.jsx";
 
 export default function Header() {
 	return (
@@ -9,10 +9,10 @@ export default function Header() {
 				</span>
 			</h1>
 			<div className="flex flex-row gap-8 text-center">
-				<Tile mode="correct">P</Tile>
-				<Tile mode="wrong">L</Tile>
-				<Tile mode="error">A</Tile>
-				<Tile mode="correct">Y</Tile>
+				<LandingPageTile mode="correct">P</LandingPageTile>
+				<LandingPageTile mode="wrong">L</LandingPageTile>
+				<LandingPageTile mode="error">A</LandingPageTile>
+				<LandingPageTile mode="correct">Y</LandingPageTile>
 			</div>
 			<p className="text-[1.5rem] md:text-[2.125rem] lg:text-[2.813rem] text-white font-sans">
 				Classic Wordle, with a few twists

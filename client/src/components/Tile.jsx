@@ -1,26 +1,23 @@
-export default function Tile({ mode, children }) {
-	if (mode === "correct")
-		return (
-			<div className="size-15 md:size-20 lg:size-25 flex items-center justify-center rounded-[5px] border-[5px] border-solid border-[#1D5138] bg-[#61E05F] box-border">
-				<span className="font-sans font-normal text-[3rem] md:text-[4rem] lg:text-[4.688rem] leading-none uppercase select-none text-[#184736]">
-					{children}
-				</span>
-			</div>
-		);
-	else if (mode === "wrong")
-		return (
-			<div className="size-15 md:size-20 lg:size-25 flex items-center justify-center rounded-[5px] border-[5px] border-solid border-[#40422D] bg-[#FFCA3B] box-border">
-				<span className="font-sans font-normal text-[3rem] md:text-[4rem] lg:text-[4.688rem] leading-none uppercase select-none text-[#40422D]">
-					{children}
-				</span>
-			</div>
-		);
+// this will be an indivdual tile on the Wordle board.
+// each row has 5 tiles
 
+const STYLES = {
+	correct: "bg-secondary-green text-text",
+	present: "bg-primary-yellow text-text",
+	absent: "bg-tile-absent text-white",
+	typing: "bg-white text-text",
+	empty: "bg-tile-empty",
+};
+
+// one square on the board
+export default function Tile({ letter, status }) {
 	return (
-		<div className="size-15 md:size-20 lg:size-25 flex items-center justify-center rounded-[5px] border-[5px] border-solid border-[#001428] bg-[#001428BF] box-border">
-			<span className="font-sans font-normal text-[3rem] md:text-[4rem] lg:text-[4.688rem] leading-none uppercase select-none text-[#F2F3F4]">
-				{children}
-			</span>
+		<div
+			className={`w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center
+				border-4 border-text rounded-sm
+				text-3xl sm:text-4xl font-bold uppercase ${STYLES[status]}`}
+		>
+			{letter}
 		</div>
 	);
 }
