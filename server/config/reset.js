@@ -1,5 +1,7 @@
 import "./dotenv.js";
 import { pool } from "./database.js";
+import { defaultSolutions } from "../data/wordles.js";
+import { getAnagrams } from "../utils/anagrams.js";
 
 const resetTable = (table_name) =>
 	`DROP TABLE IF EXISTS ${table_name};
@@ -135,7 +137,7 @@ const sampleSolves = [
 	},
 ];
 
-// seed database
+// seed database with a default set of wordles
 const seedDatabase = async () => {
 	try {
 		const userIds = {};
@@ -147,12 +149,22 @@ const seedDatabase = async () => {
 		}
 
 		const wordleIds = {};
+
+		// seeding the sample wordles that's used as placeholder data
 		for (const { word, creator } of sampleWordles) {
 			const { rows } = await pool.query(
-				`INSERT INTO wordles (word, creator_id, mode, valid_anagrams) VALUES ($1, $2, 'classic', '{}') RETURNING id`,
-				[word, userIds[creator]],
+				`INSERT INTO wordles (word, creator_id, mode, valid_anagrams) VALUES ($1, $2, 'classic', $3) RETURNING id`,
+				[word, userIds[creator], getAnagrams(word)],
 			);
 			wordleIds[word] = rows[0].id;
+		}
+
+		// seeding default wordles that'll be playable in MVP + final product
+		for (const word of defaultSolutions) {
+			await pool.query(
+				`INSERT INTO wordles (word, valid_anagrams) VALUES ($1, $2) RETURNING id`,
+				[word, getAnagrams(word)]
+			)
 		}
 
 		for (const { solver, word, startedAt, solvedAt, guesses } of sampleSolves) {
