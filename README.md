@@ -36,7 +36,7 @@ Backend:
 
 Users can login and out of the app using their GitHub account. If times permits, more SSO will be implemented.
 
-[![User Authentication Vid](https://img.youtube.com/vi/muLqSyvMFzs/0.jpg)](https://www.youtube.com/watch?v=muLqSyvMFzs)
+[![User Authentication Vid](https://img.youtube.com/vi/zmJ1yjO0iks/0.jpg)](https://youtube.com/watch?v=zmJ1yjO0iks)
 
  
 ### Classic Wordle
