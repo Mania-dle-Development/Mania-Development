@@ -1,27 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`;
 
 const modeColors = {
-	Classic: "var(--color-secondary-green)",
-	Switcharoo: "var(--color-secondary-pink)",
-	Clock: "var(--color-primary-yellow)",
+	classic: "var(--color-secondary-green)",
+	switcharoo: "var(--color-secondary-pink)",
+	clock: "var(--color-primary-yellow)",
 };
 
-const fakeWordles = [
-	{ id: 1, creator: "Jay", title: "Daily", number: 34, letters: 5, plays: 30, mode: "Classic", createdAt: "2026-11-01" },
-	{ id: 2, creator: "Vanessa", title: "Fish", number: 50, letters: 6, plays: 8, mode: "Switcharoo", createdAt: "2026-11-03" },
-	{ id: 3, creator: "Eve", title: "Geography", number: 7, letters: 4, plays: 3, mode: "Clock", createdAt: "2026-11-05" },
-	{ id: 4, creator: "Phil", title: "JavaScript", number: 4, letters: 5, plays: 12, mode: "Classic", createdAt: "2026-10-30" },
-	{ id: 5, creator: "Christian", title: "Plants", number: 1, letters: 4, plays: 3, mode: "Classic", createdAt: "2026-11-04" },
-];
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 function WordleCard({ wordle }) {
-	const color = modeColors[wordle.mode];
-	const pattern = `${wordle.mode} Mode ${wordle.mode} Mode ${wordle.mode}`;
+	const label = capitalize(wordle.mode);
+	const pattern = `${label} Mode ${label} Mode ${label}`;
 
 	return (
 		<div className="relative overflow-hidden h-44 border-[3px] border-text rounded-xl bg-white cursor-pointer hover:-translate-y-1 transition">
 			{/* faded mode text in the background */}
-			<div aria-hidden className="absolute -inset-10 -rotate-12 text-4xl font-bold leading-tight opacity-25 select-none" style={{ color }}>
+			<div aria-hidden className="absolute -inset-10 -rotate-12 text-4xl font-bold leading-tight opacity-25 select-none" style={{ color: modeColors[wordle.mode] }}>
 				{[0, 1, 2, 3].map((i) => (
 					<p key={i} className="whitespace-nowrap">{pattern}</p>
 				))}
@@ -29,20 +25,31 @@ function WordleCard({ wordle }) {
 			<div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(to bottom, transparent, white 65%)" }} />
 
 			<div className="absolute bottom-0 left-0 p-6">
-				<p className="text-2xl font-bold truncate">{wordle.creator} - {wordle.title} #{wordle.number}</p>
-				<p className="text-lg">{wordle.letters} letters - {wordle.plays} plays</p>
+				<p className="text-2xl font-bold truncate">{wordle.creator} - Wordle #{wordle.id}</p>
+				<p className="text-lg">{wordle.letters} letters - {wordle.plays} {wordle.plays === 1 ? "play" : "plays"}</p>
 			</div>
 		</div>
 	);
 }
 
 export default function BrowseWordles() {
+	const [wordles, setWordles] = useState([]);
 	const [search, setSearch] = useState("");
 	const [sort, setSort] = useState("newest");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(true);
 
-	const shown = fakeWordles
-		.filter((w) => `${w.creator} ${w.title}`.toLowerCase().includes(search.toLowerCase()))
-		.sort((a, b) => (sort === "newest" ? b.createdAt.localeCompare(a.createdAt) : b.plays - a.plays));
+	useEffect(() => {
+		fetch(API)
+			.then((res) => res.json())
+			.then((data) => (Array.isArray(data) ? setWordles(data) : setError(data.error)))
+			.catch(() => setError("Could not load Wordles."))
+			.finally(() => setLoading(false));
+	}, []);
+
+	const shown = wordles
+		.filter((w) => w.creator.toLowerCase().includes(search.toLowerCase()))
+		.sort((a, b) => (sort === "newest" ? b.created_at.localeCompare(a.created_at) : b.plays - a.plays));
 
 	const box = "border-[3px] border-text rounded-xl bg-white px-5 py-3 text-xl";
 
@@ -54,7 +61,7 @@ export default function BrowseWordles() {
 				<div className="flex gap-4 mb-8">
 					<input
 						className={`${box} flex-1 placeholder:text-gray-400`}
-						placeholder="Search"
+						placeholder="Search by creator"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
@@ -64,14 +71,17 @@ export default function BrowseWordles() {
 					</select>
 				</div>
 
+				{loading && <p className="text-xl">Loading...</p>}
+				{error && <p className="text-xl text-secondary-pink">{error}</p>}
+
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 					{shown.map((w) => (
 						<WordleCard key={w.id} wordle={w} />
 					))}
 				</div>
 
-				{shown.length === 0 && <p className="text-xl mt-6">No Wordles match your search.</p>}
+				{!loading && !error && shown.length === 0 && <p className="text-xl mt-6">No Wordles match your search.</p>}
 			</main>
-		</div>
+			</div>
 	);
 }
