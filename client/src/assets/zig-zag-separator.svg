@@ -1,0 +1,25 @@
+<svg width="1440" height="49.5" viewBox="0 0 1440 49.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- This mask cuts off the bottom half of the diamonds, turning them into triangles -->
+    <clipPath id="triangle-cut">
+      <rect x="-50" y="0" width="1540" height="49.5" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#triangle-cut)">
+    <rect x="-22" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 -22 49.5)" fill="white"/>
+    <rect x="77" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 77 49.5)" fill="white"/>
+    <rect x="176" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 176 49.5)" fill="white"/>
+    <rect x="275" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 275 49.5)" fill="white"/>
+    <rect x="374" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 374 49.5)" fill="white"/>
+    <rect x="473" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 473 49.5)" fill="white"/>
+    <rect x="572" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 572 49.5)" fill="white"/>
+    <rect x="671" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 671 49.5)" fill="white"/>
+    <rect x="770" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 770 49.5)" fill="white"/>
+    <rect x="869" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 869 49.5)" fill="white"/>
+    <rect x="968" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 968 49.5)" fill="white"/>
+    <rect x="1067" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 1067 49.5)" fill="white"/>
+    <rect x="1166" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 1166 49.5)" fill="white"/>
+    <rect x="1265" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 1265 49.5)" fill="white"/>
+    <rect x="1364" y="49.5" width="70.0036" height="70.0036" transform="rotate(-45 1364 49.5)" fill="white"/>
+    </g>
+</svg>

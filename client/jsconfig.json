@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"target": "ES2022",
+		"jsx": "react-jsx",
+		"allowJs": true,
+		"checkJs": false
+	},
+	"include": ["src/**/*.js", "src/**/*.jsx"],
+	"exclude": ["node_modules", "dist"]
+}
