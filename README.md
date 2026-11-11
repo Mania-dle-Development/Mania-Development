@@ -43,7 +43,7 @@ Users can login and out of the app using their GitHub account. If times permits,
 
 The original game of Wordle. A player tries to find an n-letter word (n being a positive integer) by trial and error. Each guess gives the player clues (what letters are in the word, the correct position of each valid letter, etc). Using these clues, they have to solve the puzzle in (n+1) rounds.
 
-[gif goes here]
+[https://youtu.be/FgN_HRkkX3A]
 
 ### Custom Wordle Creator
 
