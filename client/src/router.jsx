@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import ClassicWordle from "./pages/ClassicWordle";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import CreateWordle from "./pages/CreateWordle";
+import BrowseWordles from "./pages/BrowseWordles";
 
 export const router = createBrowserRouter([
 	{
@@ -15,6 +17,7 @@ export const router = createBrowserRouter([
 				children: [
 					{ path: "profile", element: <div className="px-55">Profile Page</div> },
 					{ path: "test", element: <p>Test Protected Route</p> },
+					{ path: "create", element: <CreateWordle /> },
 				],
 			},
 			// game pages: guests can play, only logged-in users' solves are saved
@@ -23,6 +26,10 @@ export const router = createBrowserRouter([
 			{
 				path: "non-protected",
 				element: <div className="px-55">Non-Protected Page with Sidebar Menu</div>,
+			},
+			{
+				path: "wordles",
+				element: <BrowseWordles />,
 			},
 			{
 				path: "*",

@@ -4,7 +4,7 @@ import passport from "passport";
 import session from "express-session";
 import { GitHub } from "./config/auth.js";
 import authRoutes from "./routes/auth.js";
-import wordleRoutes from "./routes/wordles.js"
+import wordleRoutes from "./routes/wordles.js";
 
 const app = express();
 
