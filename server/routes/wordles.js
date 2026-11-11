@@ -1,11 +1,9 @@
 import express from "express"
-import { requireAuth } from "../middleware/requireAuth.js"
 import { getRandomClassicWordle, submitGuess } from "../controllers/wordles.js"
 
 const router = express.Router()
 
-router.use(requireAuth) // guards every route below
-
+// open to guests too; only logged-in users get their solves saved (see controller)
 router.get("/random", getRandomClassicWordle)
 router.post("/:id/guesses", submitGuess)
 

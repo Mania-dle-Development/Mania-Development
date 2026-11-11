@@ -15,9 +15,10 @@ export const router = createBrowserRouter([
 				children: [
 					{ path: "profile", element: <div className="px-55">Profile Page</div> },
 					{ path: "test", element: <p>Test Protected Route</p> },
-					{ path: "classic", element: <ClassicWordle /> }
 				],
 			},
+			// game pages: guests can play, only logged-in users' solves are saved
+			{ path: "classic", element: <ClassicWordle /> },
 			// non-protected routes with sidebar menu (pages accessible to guest)
 			{
 				path: "non-protected",

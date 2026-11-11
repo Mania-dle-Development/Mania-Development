@@ -5,26 +5,33 @@ const MAX_GUESSES = 6
 
 export const getRandomClassicWordle = async (req, res) => {
     try {
-        // pick a random classic wordle this user hasn't played yet
-        const { rows } = await pool.query(
-            `SELECT id, word FROM wordles w
-            WHERE mode IN ('classic', 'all')
-              AND NOT EXISTS (
-                  SELECT 1 FROM solves s
-                  WHERE s.wordle_id = w.id
-                    AND s.solver_id = $1
-                    AND s.mode = 'classic'
-              )
-            ORDER BY random()
-            LIMIT 1
-            `,
-            [req.user.id]
-        )
+        // logged in → pick a classic wordle they haven't played yet
+        // guest    → any random classic wordle (guests have no saved solves)
+        const { rows } = req.user
+            ? await pool.query(
+                `SELECT id, word FROM wordles w
+                WHERE mode IN ('classic', 'all')
+                  AND NOT EXISTS (
+                      SELECT 1 FROM solves s
+                      WHERE s.wordle_id = w.id
+                        AND s.solver_id = $1
+                        AND s.mode = 'classic'
+                  )
+                ORDER BY random()
+                LIMIT 1`,
+                [req.user.id]
+            )
+            : await pool.query(
+                `SELECT id, word FROM wordles
+                WHERE mode IN ('classic', 'all')
+                ORDER BY random()
+                LIMIT 1`
+            )
         const wordle = rows[0]
 
-        // empty result = they've already played every classic wordle
+        // empty result: no classic wordles, or a logged-in user played them all
         if(!wordle) {
-            res.status(404).json( { error: "You've played every classic wordle!" })
+            res.status(404).json( { error: req.user ? "You've played every classic wordle!" : "No Wordle found" })
             return
         }
 
@@ -83,8 +90,8 @@ export const submitGuess = async (req, res) => {
         }
 
 
-        // Inserting a user's attempt in the database, win or lose.
-        if(game.status !== "playing") {
+        // Inserting a logged-in user's attempt in the database, win or lose (guests aren't saved).
+        if(game.status !== "playing" && req.user) {
             await pool.query(
                 `INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses)
                 VALUES ($1, $2, 'classic', $3, $4, $5)
