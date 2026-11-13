@@ -36,14 +36,14 @@ Backend:
 
 Users can login and out of the app using their GitHub account. If times permits, more SSO will be implemented.
 
-[![User Authentication Vid](https://img.youtube.com/vi/muLqSyvMFzs/0.jpg)](https://www.youtube.com/watch?v=muLqSyvMFzs)
+[![User Authentication Vid](https://img.youtube.com/vi/zmJ1yjO0iks/0.jpg)](https://youtube.com/watch?v=zmJ1yjO0iks)
 
  
 ### Classic Wordle
 
 The original game of Wordle. A player tries to find an n-letter word (n being a positive integer) by trial and error. Each guess gives the player clues (what letters are in the word, the correct position of each valid letter, etc). Using these clues, they have to solve the puzzle in (n+1) rounds.
 
-[gif goes here]
+[![Classic Wordle Vid](https://img.youtube.com/vi/FgN_HRkkX3A/0.jpg)](https://youtube.com/watch?v=FgN_HRkkX3A)
 
 ### Custom Wordle Creator
 
