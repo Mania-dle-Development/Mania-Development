@@ -1,6 +1,8 @@
 import { pool } from "../config/database.js";
 import { VALID_GUESSES, scoreGuess } from "../utils/words.js";
 
+const MAX_GUESSES = 6;
+
 // === TODO ===
 // combine with wordles.js functions after all modes are complete
 
@@ -46,9 +48,11 @@ export const getRandomSwitcharooWordle = async (req, res) => {
 
 		// immediately fetching anagram so don't have to compute and store later
 		const anagram = wordle.valid_anagrams[Math.floor(Math.random() * wordle.valid_anagrams.length)];
-		// printing selected anagram in logs for testing
+
+		// printing answer and selected anagram in logs for testing
 		// === TODO ===
 		// remove logs after testing
+		console.log("answer:", wordle.word);
 		console.log("anagram:", anagram);
 
 		// (This is saved under the user's cookie ID)
