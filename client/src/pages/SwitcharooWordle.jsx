@@ -24,7 +24,7 @@ export default function SwitcharooWordle() {
 
 	return (
 		<>
-			{status === "playing" && guesses.length === MAX_GUESSES / 2 && (
+			{status === "playing" && guesses.length === Math.ceil(MAX_GUESSES / 2) && (
 				<div className="absolute top-[35%] md:top-[45%] 2xl:top-2/5 left-1/2 -translate-x-1/2 translate-y-[-65%] md:translate-y-[-55%] 2xl:-translate-y-3/5 pointer-events-none z-50">
 					<span className="animate-pop-fade font-pixel text-6xl md:text-7xl lg:text-8xl font-bold text-white [-webkit-text-stroke:6px_#001428] md:[-webkit-text-stroke:8px_#001428] [paint-order:stroke_fill] text-shadow-lg text-shadow-black">
 						Switcharoo!

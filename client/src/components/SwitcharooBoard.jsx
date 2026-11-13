@@ -23,7 +23,7 @@ export default function SwitcharooBoard({ guesses, currentGuess, length, maxGues
 							return <Tile key={c} letter={letter} status={status} />;
 						})}
 					</div>
-					{maxGuesses / 2 === r + 1 && (
+					{Math.ceil(maxGuesses / 2) === r + 1 && (
 						<div className="py-1 flex items-center justify-center w-full">
 							<div
 								aria-hidden="true"

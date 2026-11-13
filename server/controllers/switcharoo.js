@@ -9,7 +9,7 @@ const MAX_GUESSES = 6;
 export const getRandomSwitcharooWordle = async (req, res) => {
 	try {
 		// logged in → pick a switcharoo wordle they haven't played yet
-		// guest    → any random switcharoo wordle (guests have no saved solves)
+		// guest → any random switcharoo wordle (guests have no saved solves)
 		// for switcharoo mode, there is an additional check to ensure
 		// there are valid anagrams to switch the word to before fetching
 		// some words cannot be played in switcharoo if they have no anagrams
@@ -81,7 +81,7 @@ export const submitSwitcharooGuess = async (req, res) => {
 		// remove logs after testing
 		console.log(
 			"current answer:",
-			game.guesses.length > MAX_GUESSES / 2 ? game.anagram : game.answer,
+			game.guesses.length > Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer,
 			"guess number: ",
 			game.guesses.length,
 			"switches on this turn:",
@@ -109,7 +109,7 @@ export const submitSwitcharooGuess = async (req, res) => {
 		// the word is scored against an anagram after the halfway point in a switcharoo round
 		const result = scoreGuess(
 			guess,
-			game.guesses.length >= MAX_GUESSES / 2 ? game.anagram : game.answer,
+			game.guesses.length >= Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer,
 		);
 		game.guesses.push({ word: guess, result });
 
@@ -148,7 +148,8 @@ export const submitSwitcharooGuess = async (req, res) => {
 		if (game.status !== "playing") {
 			// the answer for the game changes depending on if the word switches during switcharoo mode
 			// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
-			response.answer = game.guesses.length > MAX_GUESSES / 2 ? game.anagram : game.answer;
+			response.answer =
+				game.guesses.length > Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer;
 		}
 		res.json(response);
 	} catch (error) {
