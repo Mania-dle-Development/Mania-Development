@@ -10,11 +10,15 @@ export const getRandomSwitcharooWordle = async (req, res) => {
 	try {
 		// logged in → pick a switcharoo wordle they haven't played yet
 		// guest → any random switcharoo wordle (guests have no saved solves)
+
 		// for switcharoo mode, there is an additional check to ensure
 		// there are valid anagrams to switch the word to before fetching
-		// some words cannot be played in switcharoo if they have no anagrams
+		// not all words have anagrams which is why they can't be played in switcharoo
 		// CARDINALITY checks the array length of valid anagrams and returns a number
 		// it is used over LENGTH b/c LENGTH returns null on empty while CARDINALITY returns 0
+		// === TODO ===
+		// to adapt it to work with all modes, only add CARDINALITY clause if mode === "switcharoo"
+		// also replace static mode with mode from request parameters
 		const { rows } = req.user
 			? await pool.query(
 					`SELECT id, word, valid_anagrams FROM wordles w
@@ -55,7 +59,9 @@ export const getRandomSwitcharooWordle = async (req, res) => {
 		console.log("answer:", wordle.word);
 		console.log("anagram:", anagram);
 
-		// (This is saved under the user's cookie ID)
+		// (This is saved under the user's session data)
+		// === TODO ===
+		// once combined, can either set anagram to null on all other game modes or only add anagram for mode === "switcharoo"
 		req.session.game = {
 			wordleId: wordle.id,
 			answer: wordle.word.toLowerCase(),
@@ -65,7 +71,7 @@ export const getRandomSwitcharooWordle = async (req, res) => {
 			status: "playing",
 		};
 
-		res.json({ id: wordle.id, length: wordle.word.length });
+		res.status(200).json({ id: wordle.id, length: wordle.word.length });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -127,6 +133,8 @@ export const submitSwitcharooGuess = async (req, res) => {
 		// Inserting a logged-in user's attempt in the database, win or lose (guests aren't saved).
 		// Switched word is only inserted in a Switcharoo game if the word actually switches during the game
 		// if the user guesses the word before the switch occurs, null will be inserted instead
+		// === TODO ===
+		// replace static mode with mode from request parameters once all modes are combined
 		if (game.status !== "playing" && req.user) {
 			await pool.query(
 				`INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses, switched_word)
@@ -138,6 +146,7 @@ export const submitSwitcharooGuess = async (req, res) => {
 					game.startedAt,
 					won ? new Date() : null,
 					game.guesses.length,
+					// === TODO ===
 					// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
 					game.guesses.length > MAX_GUESSES / 2 ? game.anagram : null,
 				],
@@ -147,11 +156,12 @@ export const submitSwitcharooGuess = async (req, res) => {
 		const response = { result, status: game.status };
 		if (game.status !== "playing") {
 			// the answer for the game changes depending on if the word switches during switcharoo mode
+			// === TODO ===
 			// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
 			response.answer =
 				game.guesses.length > Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer;
 		}
-		res.json(response);
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
