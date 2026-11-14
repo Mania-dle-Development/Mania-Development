@@ -22,33 +22,35 @@ const YELLOW_EDGE = "shadow-[0_4px_0_0_var(--color-primary-yellow)]";
 // same "pushed down" look as :active, applied when the PHYSICAL key is held
 const PRESSED = "translate-y-1 shadow-none!";
 
+const KEY_BG = "bg-white border-[5px] border-[#001428] p-[25px] rounded-[20px]";
+
 // -- on-screen keyboard; every click goes through the same handleKey as the physical keyboard --
-export default function Keyboard({ onKey, keyStatuses, disabled }) {
+export default function Keyboard({ onKey, keyStatuses, disabled, bg = false }) {
 	// which physical key is held down right now
 	const [pressedKey, setPressedKey] = useState(null);
 
 	useEffect(() => {
-		const onDown = (e) => setPressedKey(e.key.toLowerCase())
-		const onUp = () => setPressedKey(null)
-		window.addEventListener("keydown", onDown)
-		window.addEventListener("keyup", onUp)
+		const onDown = (e) => setPressedKey(e.key.toLowerCase());
+		const onUp = () => setPressedKey(null);
+		window.addEventListener("keydown", onDown);
+		window.addEventListener("keyup", onUp);
 		return () => {
-			window.removeEventListener("keydown", onDown)
-			window.removeEventListener("keyup", onUp)
+			window.removeEventListener("keydown", onDown);
+			window.removeEventListener("keyup", onUp);
 		};
 	}, []);
 
 	// extra class for a key that's being held on the physical keyboard
-	const pressedClass = (key) => (!disabled && pressedKey === key.toLowerCase() ? PRESSED : "")
+	const pressedClass = (key) => (!disabled && pressedKey === key.toLowerCase() ? PRESSED : "");
 
 	// blur after clicking so pressing physical Enter doesn't "click" the focused button again
 	const press = (key) => (e) => {
-		e.currentTarget.blur()
-		onKey(key)
+		e.currentTarget.blur();
+		onKey(key);
 	};
 
 	return (
-		<div className="flex flex-col items-center gap-3 w-full max-w-xl px-2">
+		<div className={`flex flex-col items-center gap-3 w-full max-w-xl ${bg ? KEY_BG : "px-2"}`}>
 			{ROWS.map((row, r) => (
 				<div key={r} className="flex gap-1.5 sm:gap-2 w-full justify-center">
 					{r === 2 && (

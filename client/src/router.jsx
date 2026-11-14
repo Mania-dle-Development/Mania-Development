@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import ClassicWordle from "./pages/ClassicWordle";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import SwitcharooWordle from "./pages/SwitcharooWordle.jsx";
 
 export const router = createBrowserRouter([
 	{
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
 			},
 			// game pages: guests can play, only logged-in users' solves are saved
 			{ path: "classic", element: <ClassicWordle /> },
+			{ path: "switcharoo", element: <SwitcharooWordle /> },
 			// non-protected routes with sidebar menu (pages accessible to guest)
 			{
 				path: "non-protected",
