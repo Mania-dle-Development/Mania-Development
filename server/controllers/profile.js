@@ -1,7 +1,6 @@
-import "./dotenv.js";
 import { pool } from "../config/database.js";
 
-const profile_info_query = (user_id) =>
+const profile_info_query = () =>
     `WITH games AS (
         -- Every finished game by this user. A NULL solved_at means the game was lost.
         SELECT
@@ -14,7 +13,7 @@ const profile_info_query = (user_id) =>
             ROW_NUMBER() OVER (ORDER BY s.started_at, s.wordle_id, s.mode) AS rn
         FROM solves s
                  JOIN wordles w ON w.id = s.wordle_id
-        WHERE s.solver_id = ${user_id}
+        WHERE s.solver_id = $1
     ),
 
     -- Gaps-and-islands: consecutive games with the same result share a group number.
@@ -115,7 +114,7 @@ const profile_info_query = (user_id) =>
 FROM users u
 CROSS JOIN totals t
 CROSS JOIN streaks st
-WHERE u.id = ${user_id};
+WHERE u.id = $1;
 `
 
 export const getProfileInformation = async (req, res) => {
@@ -124,7 +123,7 @@ export const getProfileInformation = async (req, res) => {
         const user_id = req.user.id
 
         //call the database and request user information
-        const { rows } = await pool.query(profile_info_query(user_id))
+        const { rows } = await pool.query(profile_info_query, [user_id])
 
         //error
         if (rows.length === 0) {
@@ -136,7 +135,7 @@ export const getProfileInformation = async (req, res) => {
             id: user_id,
             username: user_info.username,
             avatar: user_info.avatar,
-            joinedAt: user_info.joinedAt,
+            joinedAt: user_info.created_at,
             played: user_info.played,
             solved: user_info.solved,
             solveRate: user_info.solve_rate,
