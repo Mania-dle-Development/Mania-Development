@@ -1,6 +1,6 @@
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
-import Board from "../components/Board";
-import Keyboard from "../components/Keyboard";
+import Board from "../components/Wordle/Board.jsx";
+import Keyboard from "../components/Wordle/Keyboard.jsx";
 
 // Container: gets everything from useWordle and passes it down to the presenters
 export default function ClassicWordle() {

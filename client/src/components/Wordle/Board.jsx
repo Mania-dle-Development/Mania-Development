@@ -1,4 +1,4 @@
-import Tile from "./Tile";
+import Tile from "./Tile.jsx";
 
 export default function Board({ guesses, currentGuess, length, maxGuesses }) {
 	// each row is { word, result }: submitted guess, the row being typed, or empty

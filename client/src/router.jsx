@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import ClassicWordle from "./pages/ClassicWordle";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import ProfilePage from "./pages/Profile.jsx"
 
 export const router = createBrowserRouter([
 	{
@@ -13,7 +14,7 @@ export const router = createBrowserRouter([
 				element: <ProtectedRoute />,
 				// protected routes
 				children: [
-					{ path: "profile", element: <div className="px-55">Profile Page</div> },
+					{ path: "profile", element: <ProfilePage/> },
 					{ path: "test", element: <p>Test Protected Route</p> },
 				],
 			},
