@@ -3,6 +3,9 @@ import { VALID_GUESSES, scoreGuess } from "../utils/words.js";
 
 const MAX_GUESSES = 6;
 
+// the turn right before switcharoo happens; all turns after will compare the guess against the anagram
+const SWITCHES_AFTER = Math.ceil(MAX_GUESSES / 2);
+
 // === TODO ===
 // combine with wordles.js functions after all modes are complete
 
@@ -23,6 +26,7 @@ export const getRandomSwitcharooWordle = async (req, res) => {
 			? await pool.query(
 					`SELECT id, word, valid_anagrams FROM wordles w
                 WHERE mode IN ('switcharoo', 'all')
+									AND creator_id is NULL
                   AND CARDINALITY(valid_anagrams) > 0
                   AND NOT EXISTS (
                       SELECT 1 FROM solves s
@@ -36,7 +40,7 @@ export const getRandomSwitcharooWordle = async (req, res) => {
 				)
 			: await pool.query(
 					`SELECT id, word, valid_anagrams FROM wordles
-                WHERE mode IN ('switcharoo', 'all') AND CARDINALITY(valid_anagrams) > 0
+                WHERE mode IN ('switcharoo', 'all') AND CARDINALITY(valid_anagrams) > 0 AND creator_id is NULL
                 ORDER BY random()
                 LIMIT 1`,
 				);
@@ -82,18 +86,6 @@ export const submitSwitcharooGuess = async (req, res) => {
 		const game = req.session.game;
 		const guess = req.body.guess?.toLowerCase();
 
-		// logs for testing
-		// === TODO ===
-		// remove logs after testing
-		console.log(
-			"current answer:",
-			game.guesses.length > Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer,
-			"guess number: ",
-			game.guesses.length,
-			"switches on this turn:",
-			MAX_GUESSES / 2,
-		);
-
 		// Validation cases
 		if (!game || game.wordleId !== Number(req.params.id)) {
 			return res.status(400).json({ error: "No active game for this wordle" });
@@ -111,11 +103,25 @@ export const submitSwitcharooGuess = async (req, res) => {
 			return res.status(400).json({ error: "Not in word list" });
 		}
 
+		// logs for testing
+		// === TODO ===
+		// remove logs after testing
+		console.log(
+			"current answer:",
+			game.guesses.length + 1 > SWITCHES_AFTER ? game.anagram : game.answer,
+			"guess number: ",
+			game.guesses.length,
+			"switches on this turn:",
+			MAX_GUESSES / 2,
+		);
+
 		// scoring the word and remembering it
 		// the word is scored against an anagram after the halfway point in a switcharoo round
 		const result = scoreGuess(
 			guess,
-			game.guesses.length >= Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer,
+			// since the current guess is not added to game.guesses until after this step,
+			// we need to add one to the guesses length to get the correct guess number to compare against
+			game.guesses.length + 1 > SWITCHES_AFTER ? game.anagram : game.answer,
 		);
 		game.guesses.push({ word: guess, result });
 
@@ -148,7 +154,7 @@ export const submitSwitcharooGuess = async (req, res) => {
 					game.guesses.length,
 					// === TODO ===
 					// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
-					game.guesses.length > MAX_GUESSES / 2 ? game.anagram : null,
+					game.guesses.length > SWITCHES_AFTER ? game.anagram : null,
 				],
 			);
 		}
@@ -158,8 +164,7 @@ export const submitSwitcharooGuess = async (req, res) => {
 			// the answer for the game changes depending on if the word switches during switcharoo mode
 			// === TODO ===
 			// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
-			response.answer =
-				game.guesses.length > Math.ceil(MAX_GUESSES / 2) ? game.anagram : game.answer;
+			response.answer = game.guesses.length > SWITCHES_AFTER ? game.anagram : game.answer;
 		}
 		res.status(200).json(response);
 	} catch (error) {
