@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`
 export const MAX_GUESSES = 6
 
-export default function useWordle() {
+export default function useWordle(mode = "classic") {
     // -- states --
     const [wordleId, setWordleId] = useState(null)
     const [length, setLength] = useState(5)
@@ -27,7 +27,7 @@ export default function useWordle() {
                 
         const startGame = async () => {
             try {
-                const res = await fetch(`${API}/random`, { credentials: "include" })
+                const res = await fetch(`${API}${mode !== "classic" ? `/${mode}` : ""}/random`, { credentials: "include" })
                 const data = await res.json()
                 if (ignore) return
 
@@ -49,7 +49,7 @@ export default function useWordle() {
         startGame()
         return () => { ignore = true }
 
-    }, [])
+    }, [mode])
 
     const submitGuess = async () => {
         if(currentGuess.length !== length) {
@@ -60,7 +60,7 @@ export default function useWordle() {
         setSubmitting(true)
         setError("")
         try {
-            const res = await fetch(`${API}/${wordleId}/guesses`, {
+            const res = await fetch(`${API}${mode !== "classic" ? `/${mode}` : ""}/${wordleId}/guesses`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
