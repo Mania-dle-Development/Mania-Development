@@ -9,7 +9,7 @@ const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`
 
 // same game as Classic (useWordle hook) + a stopwatch that times how long you take
 export default function ClockWordle() {
-	const { wordleId, guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
+	const { wordleId, guesses, currentGuess, length, status, answer, timeMs, error, submitting, handleKey, keyStatuses } =
 		useWordle("clock")
 
 	const [started, setStarted] = useState(false)
@@ -26,16 +26,23 @@ export default function ClockWordle() {
 		setStarted(true)
 	}
 
-	// tell the server the clock started, so IT records the official start time.
+	// send the server OUR start time, so the saved time matches the stopwatch.
 	// fire-and-forget: the server only keeps the first start (safe if this runs twice),
 	// and if this request fails, the server starts the clock on the first guess instead
 	useEffect(() => {
 		if (!started || !wordleId) return
-		fetch(`${API}/clock/${wordleId}/start`, { method: "POST", credentials: "include" }).catch(() => {})
+		fetch(`${API}/clock/${wordleId}/start`, {
+			method: "POST",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ startedAt: Date.now() }),
+		}).catch(() => {})
 	}, [started, wordleId])
 
-	// runs from the first letter until the game is won or lost, then freezes
-	const seconds = useStopwatch(started && status === "playing")
+	// live stopwatch while playing; once the game ends, show the server's final time
+	// so what the user sees is exactly what gets saved
+	const liveSeconds = useStopwatch(started && status === "playing")
+	const seconds = timeMs != null ? Math.floor(timeMs / 1000) : liveSeconds
 	const time = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
 
 	return (

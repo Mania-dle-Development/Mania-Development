@@ -58,6 +58,7 @@ export const getRandomClockWordle = async (req, res) => {
             wordleId: wordle.id,
             answer: wordle.word.toLowerCase(),
             startedAt: null,
+            fetchedAt: Date.now(), // the earliest start time we'll accept from the frontend
             guesses: [],
             status: "playing",
         }
@@ -76,7 +77,19 @@ export const startClockGame = (req, res) => {
 
     // only the FIRST call sets the start time,
     // so refreshing / calling start again can't reset the clock
-    if (!game.startedAt) game.startedAt = new Date()
+    if (!game.startedAt) {
+        const now = Date.now()
+        const clientStart = Number(req.body?.startedAt)
+
+        // use the frontend's start time so the saved time matches the stopwatch.
+        // this keeps it between when the wordle was fetched and now
+        // (this blocks a fake start time from the future or from before the game existed)
+        const start = Number.isFinite(clientStart)
+            ? Math.min(Math.max(clientStart, game.fetchedAt), now)
+            : now
+
+        game.startedAt = new Date(start)
+    }
 
     res.json({ startedAt: game.startedAt })
 }
