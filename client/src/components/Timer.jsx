@@ -6,7 +6,7 @@ export default function Timer({ seconds }) {
 	return (
 		<div className="flex items-center gap-3 bg-white border-4 border-text rounded-2xl px-8 py-2">
 			<ClockIcon className="w-9 h-9 sm:w-10 sm:h-10 text-text" />
-			<span className="text-4xl sm:text-5xl font-bold tabular-nums text-text">
+			<span className="text-4xl sm:text-5xl font-normal tabular-nums text-text">
 				{mins}:{secs}
 			</span>
 		</div>

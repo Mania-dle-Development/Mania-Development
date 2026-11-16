@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle"
 import useStopwatch from "../hooks/useStopwatch"
 import Board from "../components/Board"
@@ -11,6 +11,11 @@ export default function ClockWordle() {
 		useWordle()
 
 	const [started, setStarted] = useState(false)
+
+	// start at the top of the page
+	useEffect(() => {
+		window.scrollTo(0, 0)
+	}, [])
 
 	// start the stopwatch on the first letter typed (physical OR on-screen keyboard).
 	// once started (on any first key pressed), it stays started,
@@ -25,6 +30,7 @@ export default function ClockWordle() {
 
 	return (
 		<div className="min-h-screen bg-linear-to-b from-clock-top to-clock-bottom">
+			<title>Clock | Mania-dle</title>
 			<div className="min-h-screen max-w-3xl mx-auto bg-text/5 flex flex-col items-center gap-6 py-12">
 				<Timer seconds={seconds} />
 
