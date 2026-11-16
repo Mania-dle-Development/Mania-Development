@@ -63,7 +63,7 @@ export const getRandomClockWordle = async (req, res) => {
             status: "playing",
         }
 
-        res.json({ id: wordle.id, length: wordle.word.length })
+        res.status(200).json({ id: wordle.id, length: wordle.word.length })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
@@ -91,7 +91,7 @@ export const startClockGame = (req, res) => {
         game.startedAt = new Date(start)
     }
 
-    res.json({ startedAt: game.startedAt })
+    res.status(200).json({ startedAt: game.startedAt })
 }
 
 // POST /api/wordles/clock/:id/guesses
@@ -153,7 +153,7 @@ export const submitClockGuess = async (req, res) => {
             }
         }
 
-        res.json(response)
+        res.status(200).json(response)
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
