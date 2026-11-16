@@ -19,6 +19,15 @@ function checkMode(mode) {
 	return null;
 }
 
+// 404 if the wordle doesn't exist, 403 if it isn't yours
+async function checkOwner(id, userId) {
+	if (!/^\d+$/.test(id)) return { status: 404, error: "Wordle not found." };
+	const { rows } = await pool.query("SELECT creator_id FROM wordles WHERE id = $1", [id]);
+	if (rows.length === 0) return { status: 404, error: "Wordle not found." };
+	if (rows[0].creator_id !== userId) return { status: 403, error: "You can only change your own Wordles." };
+	return null;
+}
+
 // GET /api/wordles - all custom wordles (hides the answer)
 export const getWordles = async (req, res) => {
 	try {
@@ -37,7 +46,7 @@ export const getWordles = async (req, res) => {
 	}
 };
 
-// GET /api/wordles/mine - wordles the logged-in user made (shows the answer)
+// GET /api/wordles/me - wordles the logged-in user made (shows the answer)
 export const getMyWordles = async (req, res) => {
 	try {
 		const { rows } = await pool.query(
@@ -92,24 +101,27 @@ export const createWordle = async (req, res) => {
 	}
 };
 
-// PATCH /api/wordles/:id - edit some or all of a wordle (only your own)
+// PATCH /api/wordles/:id - edit a wordle (only your own)
 export const updateWordle = async (req, res) => {
 	const { word, mode } = req.body;
-	const error = (word !== undefined && checkWord(word)) || (mode !== undefined && checkMode(mode));
+	if (word == null || mode == null) {
+		return res.status(400).json({ error: "Word and mode are both required." });
+	}
+	const error = checkWord(word) || checkMode(mode);
 	if (error) return res.status(400).json({ error });
 
-	const clean = word !== undefined ? word.trim().toLowerCase() : null;
 	try {
+		const problem = await checkOwner(req.params.id, req.user.id);
+		if (problem) return res.status(problem.status).json({ error: problem.error });
+
+		const clean = word.trim().toLowerCase();
 		const { rows } = await pool.query(
 			`UPDATE wordles
-			 SET word = COALESCE($1, word),
-			     mode = COALESCE($2::game_mode, mode),
-			     valid_anagrams = COALESCE($3, valid_anagrams)
-			 WHERE id = $4 AND creator_id = $5
+			 SET word = $1, mode = $2, valid_anagrams = $3
+			 WHERE id = $4
 			 RETURNING id, word, mode, created_at`,
-			[clean, mode ?? null, clean ? getAnagrams(clean) : null, req.params.id, req.user.id],
+			[clean, mode, getAnagrams(clean), req.params.id],
 		);
-		if (rows.length === 0) return res.status(404).json({ error: "Wordle not found or not yours." });
 		res.status(200).json(rows[0]);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -119,11 +131,10 @@ export const updateWordle = async (req, res) => {
 // DELETE /api/wordles/:id - delete a wordle (only your own)
 export const deleteWordle = async (req, res) => {
 	try {
-		const { rowCount } = await pool.query(
-			"DELETE FROM wordles WHERE id = $1 AND creator_id = $2",
-			[req.params.id, req.user.id],
-		);
-		if (rowCount === 0) return res.status(404).json({ error: "Wordle not found or not yours." });
+		const problem = await checkOwner(req.params.id, req.user.id);
+		if (problem) return res.status(problem.status).json({ error: problem.error });
+
+		await pool.query("DELETE FROM wordles WHERE id = $1", [req.params.id]);
 		res.status(200).json({ message: "Wordle deleted." });
 	} catch (error) {
 		res.status(500).json({ error: error.message });

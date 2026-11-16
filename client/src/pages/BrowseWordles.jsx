@@ -1,36 +1,7 @@
 import { useEffect, useState } from "react";
+import WordleCard from "../components/WordleCard";
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`;
-
-const modeColors = {
-	classic: "var(--color-secondary-green)",
-	switcharoo: "var(--color-secondary-pink)",
-	clock: "var(--color-primary-yellow)",
-};
-
-const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
-function WordleCard({ wordle }) {
-	const label = capitalize(wordle.mode);
-	const pattern = `${label} Mode ${label} Mode ${label}`;
-
-	return (
-		<div className="relative overflow-hidden h-44 border-[3px] border-text rounded-xl bg-white cursor-pointer hover:-translate-y-1 transition">
-			{/* faded mode text in the background */}
-			<div aria-hidden className="absolute -inset-10 -rotate-12 text-4xl font-bold leading-tight opacity-25 select-none" style={{ color: modeColors[wordle.mode] }}>
-				{[0, 1, 2, 3].map((i) => (
-					<p key={i} className="whitespace-nowrap">{pattern}</p>
-				))}
-			</div>
-			<div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(to bottom, transparent, white 65%)" }} />
-
-			<div className="absolute bottom-0 left-0 p-6">
-				<p className="text-2xl font-bold truncate">{wordle.creator} - Wordle #{wordle.id}</p>
-				<p className="text-lg">{wordle.letters} letters - {wordle.plays} {wordle.plays === 1 ? "play" : "plays"}</p>
-			</div>
-		</div>
-	);
-}
 
 export default function BrowseWordles() {
 	const [wordles, setWordles] = useState([]);
@@ -65,7 +36,7 @@ export default function BrowseWordles() {
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
-					<select className={box} value={sort} onChange={(e) => setSort(e.target.value)}>
+					<select className={`${box} cursor-pointer`} value={sort} onChange={(e) => setSort(e.target.value)}>
 						<option value="newest">Newest</option>
 						<option value="plays">Most Played</option>
 					</select>
@@ -82,6 +53,6 @@ export default function BrowseWordles() {
 
 				{!loading && !error && shown.length === 0 && <p className="text-xl mt-6">No Wordles match your search.</p>}
 			</main>
-			</div>
+		</div>
 	);
 }

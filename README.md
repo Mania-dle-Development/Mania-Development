@@ -87,7 +87,7 @@ A timed version of Wordle with two options. Stopwatch Mode times how fast you so
 
 Classic Wordle with a twist. At some point during the game, the answer shuffles into an anagram of itself (for example, EARTH becomes HEART). The screen shows "Switcharoo!" when it happens. The game still has a total of 6 rounds.
 
-[gif goes here]
+[![Switcharoo Wordle Vid](https://img.youtube.com/vi/pFmD6EHSelY/0.jpg)](https://youtube.com/watch?v=pFmD6EHSelY)
 
 ## Installation Instructions
 

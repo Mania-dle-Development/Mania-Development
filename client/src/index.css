@@ -1,23 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  /* primary colors */
-  --color-primary-blue: #3981ae;
-  --color-primary-yellow: #f7cc59;
+	/* primary colors */
+	--color-primary-blue: #3981ae;
+	--color-primary-yellow: #f7cc59;
 
-  /* secondary colors */
-  --color-secondary-green: #84de70;
-  --color-secondary-pink: #d1678d;
+	/* secondary colors */
+	--color-secondary-green: #84de70;
+	--color-secondary-pink: #d1678d;
 
-  /* text color */
-  --color-text: #041427;
+	/* text color */
+	--color-text: #041427;
 
-  /* board + tiles */
-  --color-board: #f1f2f4;       /* gray center column */
-  --color-tile-empty: #d1d5d9;  /* empty tile fill */
-  --color-tile-absent: #3a4a5c; /* gray-out tile/key */
+	/* board + tiles */
+	--color-board: #f1f2f4; /* gray center column */
+	--color-tile-empty: #d1d5d9; /* empty tile fill */
+	--color-tile-absent: #3a4a5c; /* gray-out tile/key */
 
-  /* font family */
-  --font-pixel: "Pixelify Sans", sans-serif;
-  --font-sans: "Gabarito", sans-serif; 
+	/* font family */
+	--font-pixel: "Pixelify Sans", sans-serif;
+	--font-sans: "Gabarito", sans-serif;
+
+	/* used to animate switcharoo popup */
+	--animate-pop-fade: pop-fade 1.5s ease-in-out forwards;
+
+	@keyframes pop-fade {
+		0% {
+			opacity: 0;
+			transform: scale(0.5);
+		}
+		20% {
+			opacity: 1;
+			transform: scale(1.1);
+		}
+		32% {
+			transform: scale(1);
+		}
+		78% {
+			opacity: 1;
+			transform: scale(1);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(0.9);
+		}
+	}
 }
