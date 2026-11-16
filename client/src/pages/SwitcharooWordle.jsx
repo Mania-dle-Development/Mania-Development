@@ -39,7 +39,6 @@ export default function SwitcharooWordle() {
 					currentGuess={currentGuess}
 					length={length}
 					maxGuesses={MAX_GUESSES}
-					switcharoo
 				/>
 				{/* messages */}
 				<div className="h-7 text-center">
