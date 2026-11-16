@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import Tile from "./Tile.jsx";
+import Tile from "./Wordle/Tile.jsx";
 import SwitcharooBoardIcon from "../assets/switcharoo-board-icon.svg";
 import SwitcharooSeparator from "../assets/switcharoo-separator.svg";
 
