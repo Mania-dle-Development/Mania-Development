@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`;
+const PER_PAGE = 5;
 
 export default function CreateWordle() {
 	const [word, setWord] = useState("");
@@ -10,6 +11,7 @@ export default function CreateWordle() {
 	const [editingId, setEditingId] = useState(null);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(true);
+	const [page, setPage] = useState(1);
 
 	// load the logged-in user's wordles
 	useEffect(() => {
@@ -19,6 +21,11 @@ export default function CreateWordle() {
 			.catch(() => setError("Could not load your Wordles."))
 			.finally(() => setLoading(false));
 	}, []);
+
+	// pagination: only show PER_PAGE wordles at a time
+	const totalPages = Math.max(1, Math.ceil(wordles.length / PER_PAGE));
+	const currentPage = Math.min(page, totalPages);
+	const shown = wordles.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -43,6 +50,7 @@ export default function CreateWordle() {
 			setEditingId(null);
 		} else {
 			setWordles((prev) => [data, ...prev]);
+			setPage(1); // new wordles show up at the top of page 1
 		}
 		setWord("");
 	}
@@ -70,6 +78,7 @@ export default function CreateWordle() {
 
 	const box = "border-[3px] border-text rounded-xl bg-white px-5 py-3 text-xl";
 	const iconBtn = "cursor-pointer transition active:translate-y-0.5";
+	const pageBtn = "cursor-pointer border-[3px] border-text rounded-xl bg-white px-4 py-1 text-lg font-medium transition active:translate-y-0.5 disabled:opacity-40 disabled:cursor-default disabled:active:translate-y-0";
 
 	return (
 		<div className="min-h-screen bg-white flex justify-center">
@@ -117,7 +126,7 @@ export default function CreateWordle() {
 				{loading && <p className="text-xl">Loading...</p>}
 				{!loading && wordles.length === 0 && <p className="text-xl">You haven't made any Wordles yet.</p>}
 				<ul>
-					{wordles.map((w) => (
+					{shown.map((w) => (
 						<li key={w.id} className="flex justify-between items-center border-b border-text py-4 text-2xl">
 							<span>{w.word.toUpperCase()} - {w.plays} {w.plays === 1 ? "play" : "plays"}</span>
 							<span className="flex gap-4">
@@ -131,6 +140,18 @@ export default function CreateWordle() {
 						</li>
 					))}
 				</ul>
+
+				{totalPages > 1 && (
+					<div className="flex justify-between items-center mt-6">
+						<button className={pageBtn} onClick={() => setPage(currentPage - 1)} disabled={currentPage === 1}>
+							Prev
+						</button>
+						<span className="text-lg">Page {currentPage} of {totalPages}</span>
+						<button className={pageBtn} onClick={() => setPage(currentPage + 1)} disabled={currentPage === totalPages}>
+							Next
+						</button>
+					</div>
+				)}
 			</main>
 		</div>
 	);
