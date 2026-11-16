@@ -26,6 +26,7 @@ export default function BrowseWordles() {
 
 	return (
 		<div className="min-h-screen bg-white flex justify-center">
+			<title>Custom Wordles | MANIA-dle</title>
 			<main className="w-full max-w-3xl min-h-screen bg-board px-10 py-16 text-text">
 				<h1 className="font-pixel text-5xl mb-8">Custom Wordles</h1>
 

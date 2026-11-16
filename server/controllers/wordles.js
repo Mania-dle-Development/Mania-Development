@@ -21,7 +21,7 @@ function checkMode(mode) {
 
 // 404 if the wordle doesn't exist, 403 if it isn't yours
 async function checkOwner(id, userId) {
-	if (!/^\d+$/.test(id)) return { status: 404, error: "Wordle not found." };
+	if (!/^\d+$/.test(id)) return { status: 400, error: "Invalid Wordle id." };
 	const { rows } = await pool.query("SELECT creator_id FROM wordles WHERE id = $1", [id]);
 	if (rows.length === 0) return { status: 404, error: "Wordle not found." };
 	if (rows[0].creator_id !== userId) return { status: 403, error: "You can only change your own Wordles." };
