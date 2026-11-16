@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import ClassicWordle from "./pages/ClassicWordle";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import ProfilePage from "./pages/Profile.jsx"
+import SwitcharooWordle from "./pages/SwitcharooWordle.jsx";
 
 export const router = createBrowserRouter([
 	{

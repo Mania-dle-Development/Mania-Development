@@ -9,6 +9,7 @@ export default function ClassicWordle() {
 
 	return (
 		<div className="min-h-screen max-w-3xl mx-auto bg-board flex flex-col items-center gap-8 py-16">
+			<title>Classic | Mania-dle</title>
 			<Board guesses={guesses} currentGuess={currentGuess} length={length} maxGuesses={MAX_GUESSES} />
 
 			{/* messages */}

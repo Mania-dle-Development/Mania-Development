@@ -23,6 +23,9 @@ export default function Profile() {
 					signal: controller.signal,
 				});
 
+				//test
+				console.log(response);
+
 				// not logged in, so send the user to the login page
 				if (response.status === 401) {
 					navigate("/login");
