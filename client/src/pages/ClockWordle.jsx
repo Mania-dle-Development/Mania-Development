@@ -5,10 +5,12 @@ import Board from "../components/Board"
 import Keyboard from "../components/Keyboard"
 import Timer from "../components/Timer"
 
+const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`
+
 // same game as Classic (useWordle hook) + a stopwatch that times how long you take
 export default function ClockWordle() {
-	const { guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
-		useWordle()
+	const { wordleId, guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
+		useWordle("clock")
 
 	const [started, setStarted] = useState(false)
 
@@ -23,6 +25,14 @@ export default function ClockWordle() {
 	if (!started && (currentGuess.length > 0 || guesses.length > 0)) {
 		setStarted(true)
 	}
+
+	// tell the server the clock started, so IT records the official start time.
+	// fire-and-forget: the server only keeps the first start (safe if this runs twice),
+	// and if this request fails, the server starts the clock on the first guess instead
+	useEffect(() => {
+		if (!started || !wordleId) return
+		fetch(`${API}/clock/${wordleId}/start`, { method: "POST", credentials: "include" }).catch(() => {})
+	}, [started, wordleId])
 
 	// runs from the first letter until the game is won or lost, then freezes
 	const seconds = useStopwatch(started && status === "playing")
