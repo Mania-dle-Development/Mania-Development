@@ -149,10 +149,12 @@ export const getRandomClassicWordle = async (req, res) => {
 	try {
 		// logged in → pick a classic wordle they haven't played yet
 		// guest    → any random classic wordle (guests have no saved solves)
+		// creator_id IS NULL → only default words, never user-created (custom) wordles
 		const { rows } = req.user
 			? await pool.query(
 					`SELECT id, word FROM wordles w
 					WHERE mode IN ('classic', 'all')
+					  AND creator_id IS NULL
 					  AND NOT EXISTS (
 					      SELECT 1 FROM solves s
 					      WHERE s.wordle_id = w.id
@@ -166,6 +168,7 @@ export const getRandomClassicWordle = async (req, res) => {
 			: await pool.query(
 					`SELECT id, word FROM wordles
 					WHERE mode IN ('classic', 'all')
+					  AND creator_id IS NULL
 					ORDER BY random()
 					LIMIT 1`,
 				);

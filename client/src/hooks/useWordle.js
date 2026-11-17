@@ -11,6 +11,7 @@ export default function useWordle(mode = "classic") {
     const [currentGuess, setCurrentGuess] = useState("")
     const [status, setStatus] = useState("loading")
     const [answer, setAnswer] = useState(null)
+    const [timeMs, setTimeMs] = useState(null) // Clock mode only: the server's final time
     const [error, setError] = useState("")
     const [submitting, setSubmitting] = useState(false)
 
@@ -78,7 +79,8 @@ export default function useWordle(mode = "classic") {
             setCurrentGuess("")
             setStatus(data.status) // server decides whether the game is still going ("playing", "lost", or "won")
 
-            if(data.answer) setAnswer(data.answer) // finally loads answer when the game is over 
+            if(data.answer) setAnswer(data.answer) // finally loads answer when the game is over
+            if(data.timeMs != null) setTimeMs(data.timeMs) // official time from the server (for Clock mode)
 
 
         } catch {
@@ -133,5 +135,5 @@ export default function useWordle(mode = "classic") {
         return map
     }, [guesses]) // recompute only when guesses change
 
-    return { wordleId, length, guesses, currentGuess, status, answer, error, submitting, handleKey, keyStatuses };
+    return { wordleId, length, guesses, currentGuess, status, answer, timeMs, error, submitting, handleKey, keyStatuses };
 }

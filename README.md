@@ -79,9 +79,9 @@ Players can see a list of recently made custom Wordles and pick one to play. The
 
 ### Clock Mode
 
-A timed version of Wordle with two options. Stopwatch Mode times how fast you solve a puzzle. Race Mode gives you a countdown, and you have to solve the puzzle before time runs out.
+A timed version of Wordle. A stopwatch starts on your first letter and times how fast you solve the puzzle.
 
-[gif goes here]
+<img width="700" alt="Clock Mode stopwatch" src="https://github.com/user-attachments/assets/5783cf6a-1a48-4470-a46c-3238a1bfbbc5" />
 
 ### Switcharoo Mode
 
