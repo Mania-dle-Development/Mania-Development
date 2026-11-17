@@ -1,7 +1,6 @@
 import "./dotenv.js";
 import { pool } from "./database.js";
-import { defaultSolutions } from "../data/wordles.js";
-import { getAnagrams } from "../utils/anagrams.js";
+import { words as solutions, getAnagrams } from "../utils/anagrams.js";
 
 const resetTable = (table_name) =>
 	`DROP TABLE IF EXISTS ${table_name};
@@ -88,90 +87,21 @@ const createUserTable = async () => {
 	}
 };
 
-// sample data
-const sampleUsers = ["jay", "vanessa", "phil", "eve", "christian"];
-
-const sampleWordles = [
-	{ word: "crane", creator: "jay" },
-	{ word: "light", creator: "vanessa" },
-	{ word: "trace", creator: "phil" },
-	{ word: "acorn", creator: "eve" },
-	{ word: "adopt", creator: "christian" },
-];
-
-const sampleSolves = [
-	{
-		solver: "vanessa",
-		word: "crane",
-		startedAt: "2026-11-01T10:00:00Z",
-		solvedAt: "2026-11-01T10:03:20Z",
-		guesses: 4,
-	},
-	{
-		solver: "phil",
-		word: "light",
-		startedAt: "2026-11-01T11:00:00Z",
-		solvedAt: "2026-11-01T11:01:15Z",
-		guesses: 3,
-	},
-	{
-		solver: "eve",
-		word: "trace",
-		startedAt: "2026-11-01T14:30:00Z",
-		solvedAt: "2026-11-01T14:34:45Z",
-		guesses: 5,
-	},
-	{
-		solver: "christian",
-		word: "acorn",
-		startedAt: "2026-11-02T09:00:00Z",
-		solvedAt: "2026-11-02T09:02:10Z",
-		guesses: 2,
-	},
-	{
-		solver: "jay",
-		word: "adopt",
-		startedAt: "2026-11-02T16:15:00Z",
-		solvedAt: "2026-11-02T16:20:30Z",
-		guesses: 6,
-	},
-];
-
 // seed database with a default set of wordles
 const seedDatabase = async () => {
 	try {
-		const userIds = {};
-		for (const username of sampleUsers) {
-			const { rows } = await pool.query("INSERT INTO users (username) VALUES ($1) RETURNING id", [
-				username,
-			]);
-			userIds[username] = rows[0].id;
-		}
+		// seeding every word in valid_solutions.csv as a default wordle (playable in every mode)
+		// inserted 500 at a time, so it's 5 queries instead of 2,315 trips to the database
+		const CHUNK_SIZE = 500
+		for (let i = 0; i < solutions.length; i += CHUNK_SIZE) {
+			const chunk = solutions.slice(i, i + CHUNK_SIZE)
 
-		const wordleIds = {};
+			// builds "($1, $2), ($3, $4), ..." with one pair of placeholders per word
+			const placeholders = chunk.map((_, j) => `($${j * 2 + 1}, $${j * 2 + 2})`).join(", ")
+			// matching values: [word1, anagrams1, word2, anagrams2, ...]
+			const values = chunk.flatMap((word) => [word, getAnagrams(word)])
 
-		// seeding the sample wordles that's used as placeholder data
-		for (const { word, creator } of sampleWordles) {
-			const { rows } = await pool.query(
-				`INSERT INTO wordles (word, creator_id, mode, valid_anagrams) VALUES ($1, $2, 'classic', $3) RETURNING id`,
-				[word, userIds[creator], getAnagrams(word)],
-			);
-			wordleIds[word] = rows[0].id;
-		}
-
-		// seeding default wordles that'll be playable in MVP + final product
-		for (const word of defaultSolutions) {
-			await pool.query(
-				`INSERT INTO wordles (word, valid_anagrams) VALUES ($1, $2) RETURNING id`,
-				[word, getAnagrams(word)]
-			)
-		}
-
-		for (const { solver, word, startedAt, solvedAt, guesses } of sampleSolves) {
-			await pool.query(
-				`INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses) VALUES ($1, $2, 'classic', $3, $4, $5)`,
-				[userIds[solver], wordleIds[word], startedAt, solvedAt, guesses],
-			);
+			await pool.query(`INSERT INTO wordles (word, valid_anagrams) VALUES ${placeholders}`, values)
 		}
 
 		console.log("Database seeded successfully.");

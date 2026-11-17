@@ -17,6 +17,10 @@
 	--color-tile-empty: #d1d5d9; /* empty tile fill */
 	--color-tile-absent: #3a4a5c; /* gray-out tile/key */
 
+	/* clock mode background gradient */
+	--color-clock-top: #d1658c;
+	--color-clock-bottom: #cd6a45;
+
 	/* font family */
 	--font-pixel: "Pixelify Sans", sans-serif;
 	--font-sans: "Gabarito", sans-serif;

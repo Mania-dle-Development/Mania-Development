@@ -11,6 +11,7 @@ import {
 	submitGuess,
 } from "../controllers/wordles.js";
 import { getRandomSwitcharooWordle, submitSwitcharooGuess } from "../controllers/switcharoo.js";
+import { getRandomClockWordle, startClockGame, submitClockGuess } from "../controllers/clock.js";
 
 const router = express.Router();
 
@@ -22,6 +23,9 @@ const router = express.Router();
 // game routes: open to guests too; only logged-in users get their solves saved (see controller)
 router.get("/switcharoo/random", getRandomSwitcharooWordle);
 router.post("/switcharoo/:id/guesses", submitSwitcharooGuess);
+router.get("/clock/random", getRandomClockWordle);
+router.post("/clock/:id/start", startClockGame);
+router.post("/clock/:id/guesses", submitClockGuess);
 router.get("/random", getRandomClassicWordle);
 router.post("/:id/guesses", submitGuess);
 
