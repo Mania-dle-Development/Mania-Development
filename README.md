@@ -49,7 +49,7 @@ The original game of Wordle. A player tries to find an n-letter word (n being a 
 
 Users can create their own Wordle with custom words to share with other players. The user has the option to update or delete the Wordle after it is created.
 
-[gif goes here]
+<img width="700" alt="create2 0" src="https://github.com/user-attachments/assets/0ca59a79-a573-493e-a91c-64e4b683b2cf" />
 
 ### Player Profiles
 
@@ -73,21 +73,21 @@ Players who get stuck can reveal one correct letter, but it costs them a guess.
 
 Players can see a list of recently made custom Wordles and pick one to play. They can sort the list by newest or most played.
 
-[gif goes here]
+<img width="700" alt="Searching and sorting custom Wordles" src="https://github.com/user-attachments/assets/d83e9d03-ffe0-4e19-8e19-8eadbb4b8426" />
 
 ### [ADDITIONAL FEATURES GO HERE - ADD ALL FEATURES HERE IN THE FORMAT ABOVE; you will check these off and add gifs as you complete them]
 
 ### Clock Mode
 
-A timed version of Wordle with two options. Stopwatch Mode times how fast you solve a puzzle. Race Mode gives you a countdown, and you have to solve the puzzle before time runs out.
+A timed version of Wordle. A stopwatch starts on your first letter and times how fast you solve the puzzle.
 
-[gif goes here]
+<img width="700" alt="Clock Mode stopwatch" src="https://github.com/user-attachments/assets/5783cf6a-1a48-4470-a46c-3238a1bfbbc5" />
 
 ### Switcharoo Mode
 
 Classic Wordle with a twist. At some point during the game, the answer shuffles into an anagram of itself (for example, EARTH becomes HEART). The screen shows "Switcharoo!" when it happens. The game still has a total of 6 rounds.
 
-[gif goes here]
+[![Switcharoo Wordle Vid](https://img.youtube.com/vi/pFmD6EHSelY/0.jpg)](https://youtube.com/watch?v=pFmD6EHSelY)
 
 ## Installation Instructions
 
