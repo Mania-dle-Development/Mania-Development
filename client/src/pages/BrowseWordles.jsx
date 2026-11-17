@@ -1,5 +1,5 @@
 import WordleCard from "../components/Wordle/WordleCard.jsx";
-import useBrowsleWordles from "../hooks/useBrowseWordles.js";
+import useBrowsleWordles from "../hooks/useBrowseWordle.js";
 
 
 export default function BrowseWordles() {
