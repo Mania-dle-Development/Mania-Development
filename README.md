@@ -55,7 +55,7 @@ Users can create their own Wordle with custom words to share with other players.
 
 Players can create an account to track their stats including total games played, which Wordles they have solved so far, and all the custom Wordles they have created. They can also personalize their profile to showcase their favorite word and their favorite Wordle mode.
 
-[gif goes here]
+![Profile_Page.gif](planning/src/Profile_Page.gif)
 
 ### Leaderboard
 
@@ -75,7 +75,7 @@ Players can see a list of recently made custom Wordles and pick one to play. The
 
 <img width="700" alt="Searching and sorting custom Wordles" src="https://github.com/user-attachments/assets/d83e9d03-ffe0-4e19-8e19-8eadbb4b8426" />
 
-### [ADDITIONAL FEATURES GO HERE - ADD ALL FEATURES HERE IN THE FORMAT ABOVE; you will check these off and add gifs as you complete them]
+### [ADDITIONAL FEATURES]
 
 ### Clock Mode
 

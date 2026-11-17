@@ -7,7 +7,7 @@ const SHARE_LINK = "[soon-to-be-made-link]";
 // the message copied to the clipboard when the user presses share
 // edit this function to change the wording later
 const buildShareMessage = (username) =>
-	`I'm ${username}, and I'm playing Mania-dle. You can play too at this link ${SHARE_LINK}`;
+	`I'm ${username}, and I'm playing Mania-dle. You can play too: ${SHARE_LINK}`;
 
 // how long the button says "Copied!" before going back to "Share"
 const COPIED_RESET_MS = 2000;
