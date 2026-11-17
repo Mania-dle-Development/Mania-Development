@@ -294,7 +294,9 @@ export const getWordleGame = async (req, res) => {
 
 		// a custom wordle can only be played in the mode its creator picked
 		if (wordle.mode !== mode)
-			return res.status(400).json({ error: `This Wordle can't be played in ${mode} mode.` });
+			return res.status(400).json({
+				error: `This Wordle cannot be played in ${mode[0].toUpperCase() + mode.slice(1)} Mode.`,
+			})
 
 		// note: a logged-in user can replay a wordle they already played,
 		// the replay just isn't saved (ON CONFLICT DO NOTHING in submitGuess)
