@@ -245,12 +245,6 @@ export const getRandomWordle = async (req, res) => {
 				? wordle.valid_anagrams[Math.floor(Math.random() * wordle.valid_anagrams.length)]
 				: null;
 
-		// printing answer and selected anagram in logs for testing
-		// === TODO ===
-		// remove logs after testing
-		console.log("answer:", wordle.word);
-		console.log("anagram:", anagram);
-
 		// (This is saved under the user's session data)
 		req.session.game = {
 			wordleId: wordle.id,
@@ -294,20 +288,6 @@ export const submitGuess = async (req, res) => {
 
 		// backup: if the start request never arrived, start the clock now
 		if (game.mode === "clock" && !game.startedAt) game.startedAt = new Date();
-
-		// logs for testing
-		// === TODO ===
-		// remove logs after testing
-		if (game.mode === "switcharoo") {
-			console.log(
-				"current answer:",
-				game.guesses.length + 1 > SWITCHES_AFTER ? game.anagram : game.answer,
-				"guess number: ",
-				game.guesses.length,
-				"switches on this turn:",
-				MAX_GUESSES / 2,
-			);
-		}
 
 		// scoring the word and remembering it
 		// the word is scored against an anagram after the halfway point in a switcharoo round
