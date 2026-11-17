@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router"
 import WordleCard from "../components/Wordle/WordleCard.jsx";
 
 
@@ -49,8 +50,11 @@ export default function BrowseWordles() {
 				{error && <p className="text-xl text-secondary-pink">{error}</p>}
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+					{/* each card links to its own game page, ex: /classic/42 or /clock/50 */}
 					{shown.map((w) => (
-						<WordleCard key={w.id} wordle={w} />
+						<Link key={w.id} to={`/${w.mode}/${w.id}`}>
+							<WordleCard wordle={w} />
+						</Link>
 					))}
 				</div>
 
