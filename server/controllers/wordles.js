@@ -151,7 +151,7 @@ const SWITCHES_AFTER = Math.ceil(MAX_GUESSES / 2);
 // shared check for the session game: returns an error message, or null if the game is OK
 const validateGame = (game, id, clock_mode = false) => {
 	if (!game || !game.mode || game.wordleId !== Number(id)) return "No active game for this wordle";
-	if (clock_mode || game.mode !== "clock") return "No active game for this wordle";
+	if (clock_mode && game.mode !== "clock") return "No active game for this wordle";
 	if (game.status !== "playing") return "Game is already over";
 	return null;
 };
