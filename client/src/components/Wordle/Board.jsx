@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import Tile from "./Tile.jsx";
-import SwitcharooBoardIcon from "../assets/switcharoo-board-icon.svg";
-import SwitcharooSeparator from "../assets/switcharoo-separator.svg";
+import SwitcharooBoardIcon from "../../assets/switcharoo-board-icon.svg";
+import SwitcharooSeparator from "../../assets/switcharoo-separator.svg";
 
 export default function Board({ guesses, currentGuess, length, maxGuesses, switcharoo = false }) {
 	// each row is { word, result }: submitted guess, the row being typed, or empty
