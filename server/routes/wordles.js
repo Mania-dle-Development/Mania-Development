@@ -7,13 +7,14 @@ import {
 	createWordle,
 	updateWordle,
 	deleteWordle,
+	startClockGame,
 	getRandomWordle,
 	submitGuess,
 } from "../controllers/wordles.js";
-import { startClockGame } from "../controllers/clock.js";
 
 const router = express.Router();
 
+// `/clock/:id/start` starts the timer for clock mode
 // `/:mode/random` to fetch a random wordle for that specific mode
 // `/:id/guesses` to submit a guess for a wordle game (mode is saved in session data)
 router.post("/clock/:id/start", startClockGame);

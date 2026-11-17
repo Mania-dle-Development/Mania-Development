@@ -149,10 +149,36 @@ const MAX_GUESSES = 6;
 const SWITCHES_AFTER = Math.ceil(MAX_GUESSES / 2);
 
 // shared check for the session game: returns an error message, or null if the game is OK
-const validateGame = (game, id) => {
+const validateGame = (game, id, clock_mode = false) => {
 	if (!game || !game.mode || game.wordleId !== Number(id)) return "No active game for this wordle";
+	if (clock_mode || game.mode !== "clock") return "No active game for this wordle";
 	if (game.status !== "playing") return "Game is already over";
 	return null;
+};
+
+// POST /api/wordles/clock/:id/start  (called on the first letter typed)
+export const startClockGame = (req, res) => {
+	const game = req.session.game;
+	const problem = validateGame(game, req.params.id, true);
+	if (problem) return res.status(400).json({ error: problem });
+
+	// only the FIRST call sets the start time,
+	// so refreshing / calling start again can't reset the clock
+	if (!game.startedAt) {
+		const now = Date.now();
+		const clientStart = Number(req.body?.startedAt);
+
+		// use the frontend's start time so the saved time matches the stopwatch.
+		// this keeps it between when the wordle was fetched and now
+		// (this blocks a fake start time from the future or from before the game existed)
+		const start = Number.isFinite(clientStart)
+			? Math.min(Math.max(clientStart, game.fetchedAt), now)
+			: now;
+
+		game.startedAt = new Date(start);
+	}
+
+	res.status(200).json({ startedAt: game.startedAt });
 };
 
 // GET /:mode/random -- Fetches a random wordle that can be played in the specified mode
@@ -169,12 +195,14 @@ export const getRandomWordle = async (req, res) => {
 		// CARDINALITY checks the array length of valid anagrams and returns a number
 		// it is used over LENGTH b/c LENGTH returns null on empty while CARDINALITY returns 0
 
-		if (!req.params.mode) res.status(400).json({ error: "Mode is required" });
+		if (!req.params.mode) return res.status(400).json({ error: "Mode is required" });
 
 		const mode = req.params.mode;
 
 		if (!MODES.includes(mode))
-			res.status(400).json({ error: "Mode must be either 'classic', 'clock', or 'switcharoo'" });
+			return res
+				.status(400)
+				.json({ error: "Mode must be either 'classic', 'clock', or 'switcharoo'" });
 
 		const { rows } = req.user
 			? await pool.query(
@@ -316,7 +344,6 @@ export const submitGuess = async (req, res) => {
 			const endedAt = new Date();
 			// startedAt may be a string: the session store saves it as JSON
 			response.timeMs = endedAt - new Date(game.startedAt);
-			response.answer = game.answer;
 
 			if (req.user) {
 				await pool.query(
@@ -342,8 +369,7 @@ export const submitGuess = async (req, res) => {
 
 		if (game.status !== "playing") {
 			// the answer for the game changes depending on if the word switches during switcharoo mode
-			// === TODO ===
-			// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
+			// all other modes keep the same answer
 			response.answer =
 				game.mode === "switcharoo" && game.guesses.length > SWITCHES_AFTER
 					? game.anagram
