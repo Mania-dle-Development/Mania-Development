@@ -24,7 +24,8 @@ async function checkOwner(id, userId) {
 	if (!/^\d+$/.test(id)) return { status: 400, error: "Invalid Wordle id." };
 	const { rows } = await pool.query("SELECT creator_id FROM wordles WHERE id = $1", [id]);
 	if (rows.length === 0) return { status: 404, error: "Wordle not found." };
-	if (rows[0].creator_id !== userId) return { status: 403, error: "You can only change your own Wordles." };
+	if (rows[0].creator_id !== userId)
+		return { status: 403, error: "You can only change your own Wordles." };
 	return null;
 }
 
@@ -141,73 +142,119 @@ export const deleteWordle = async (req, res) => {
 	}
 };
 
-/* ---------- classic game (playing) ---------- */
+/* ---------- game (playing) ---------- */
 
 const MAX_GUESSES = 6;
+// the turn right before switcharoo happens; all turns after will compare the guess against the anagram
+const SWITCHES_AFTER = Math.ceil(MAX_GUESSES / 2);
 
-export const getRandomClassicWordle = async (req, res) => {
+// shared check for the session game: returns an error message, or null if the game is OK
+const validateGame = (game, id) => {
+	if (!game || !game.mode || game.wordleId !== Number(id)) return "No active game for this wordle";
+	if (game.status !== "playing") return "Game is already over";
+	return null;
+};
+
+// GET /:mode/random -- Fetches a random wordle that can be played in the specified mode
+export const getRandomWordle = async (req, res) => {
 	try {
-		// logged in → pick a classic wordle they haven't played yet
-		// guest    → any random classic wordle (guests have no saved solves)
-		// creator_id IS NULL → only default words, never user-created (custom) wordles
+		// logged in → pick a switcharoo wordle they haven't played yet
+		// guest → any random switcharoo wordle (guests have no saved solves)
+
+		// creator_id IS NULL gives us only default words, never user-created (custom) wordles.
+
+		// for switcharoo mode, there is an additional check to ensure
+		// there are valid anagrams to switch the word to before fetching
+		// not all words have anagrams which is why they can't be played in switcharoo
+		// CARDINALITY checks the array length of valid anagrams and returns a number
+		// it is used over LENGTH b/c LENGTH returns null on empty while CARDINALITY returns 0
+
+		if (!req.params.mode) res.status(400).json({ error: "Mode is required" });
+
+		const mode = req.params.mode;
+
+		if (!MODES.includes(mode))
+			res.status(400).json({ error: "Mode must be either 'classic', 'clock', or 'switcharoo'" });
+
 		const { rows } = req.user
 			? await pool.query(
-					`SELECT id, word FROM wordles w
-					WHERE mode IN ('classic', 'all')
-					  AND creator_id IS NULL
-					  AND NOT EXISTS (
-					      SELECT 1 FROM solves s
-					      WHERE s.wordle_id = w.id
-					        AND s.solver_id = $1
-					        AND s.mode = 'classic'
-					  )
-					ORDER BY random()
-					LIMIT 1`,
-					[req.user.id],
+					`SELECT id, word, valid_anagrams FROM wordles w
+								WHERE mode IN ($2, 'all')
+									AND creator_id is NULL
+									${mode === "switcharoo" ? "AND CARDINALITY(valid_anagrams) > 0" : ""}
+									AND NOT EXISTS (
+											SELECT 1 FROM solves s
+											WHERE s.wordle_id = w.id
+												AND s.solver_id = $1
+												AND s.mode = $2
+									)
+								ORDER BY random()
+								LIMIT 1`,
+					[req.user.id, mode],
 				)
 			: await pool.query(
-					`SELECT id, word FROM wordles
-					WHERE mode IN ('classic', 'all')
-					  AND creator_id IS NULL
-					ORDER BY random()
-					LIMIT 1`,
+					`SELECT id, word, valid_anagrams FROM wordles
+								WHERE mode IN ($1, 'all') 
+								${mode === "switcharoo" ? "AND CARDINALITY(valid_anagrams) > 0" : ""} 
+								AND creator_id is NULL
+								ORDER BY random()
+								LIMIT 1`,
+					[mode],
 				);
 		const wordle = rows[0];
 
-		// empty result: no classic wordles, or a logged-in user played them all
+		// empty result: no wordles for that mode, or a logged-in user played them all
 		if (!wordle) {
-			res.status(404).json({ error: req.user ? "You've played every classic wordle!" : "No Wordle found" });
+			res
+				.status(404)
+				.json({ error: req.user ? `You've played every ${mode} wordle!` : "No Wordle found" });
 			return;
 		}
 
-		// (This is saved under the user's cookie ID)
+		// immediately fetching anagram so don't have to compute and store later
+		const anagram =
+			mode === "switcharoo"
+				? wordle.valid_anagrams[Math.floor(Math.random() * wordle.valid_anagrams.length)]
+				: null;
+
+		// printing answer and selected anagram in logs for testing
+		// === TODO ===
+		// remove logs after testing
+		console.log("answer:", wordle.word);
+		console.log("anagram:", anagram);
+
+		// (This is saved under the user's session data)
 		req.session.game = {
 			wordleId: wordle.id,
 			answer: wordle.word.toLowerCase(),
-			startedAt: new Date(),
+			mode,
+			anagram, // for switcharoo, the anagram is saved in the cookie as well; null if not switcharoo
+			startedAt: mode === "clock" ? null : new Date(),
+			fetchedAt: Date.now(), // the earliest start time we'll accept from the frontend for clock mode
 			guesses: [],
 			status: "playing",
 		};
 
-		res.json({ id: wordle.id, length: wordle.word.length });
+		res.status(200).json({ id: wordle.id, length: wordle.word.length });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
 };
 
+// CLOCK MODE: Same rules as Classic, but the SERVER side times the game
+//   startedAt records when the user types their first letter (POST /clock/:id/start)
+//   endedAt records the moment the server confirms the winning guess (or the last losing guess).
+
+// SWITCHAROO MODE: Answer switches around the halfway mark into an anagram of the word
+// POST /:id/guesses -- Submits and scores a Wordle guess, mode is found in session data
 export const submitGuess = async (req, res) => {
 	try {
 		const game = req.session.game;
 		const guess = req.body.guess?.toLowerCase();
 
 		// Validation cases
-		if (!game || game.wordleId !== Number(req.params.id)) {
-			return res.status(400).json({ error: "No active game for this wordle" });
-		}
-
-		if (game.status !== "playing") {
-			return res.status(400).json({ error: "Game is already over" });
-		}
+		const problem = validateGame(game, req.params.id);
+		if (problem) return res.status(400).json({ error: problem });
 
 		if (!guess || guess.length !== game.answer.length) {
 			return res.status(400).json({ error: `Guess must be ${game.answer.length} letters` });
@@ -217,8 +264,33 @@ export const submitGuess = async (req, res) => {
 			return res.status(400).json({ error: "Not in word list" });
 		}
 
+		// backup: if the start request never arrived, start the clock now
+		if (game.mode === "clock" && !game.startedAt) game.startedAt = new Date();
+
+		// logs for testing
+		// === TODO ===
+		// remove logs after testing
+		if (game.mode === "switcharoo") {
+			console.log(
+				"current answer:",
+				game.guesses.length + 1 > SWITCHES_AFTER ? game.anagram : game.answer,
+				"guess number: ",
+				game.guesses.length,
+				"switches on this turn:",
+				MAX_GUESSES / 2,
+			);
+		}
+
 		// scoring the word and remembering it
-		const result = scoreGuess(guess, game.answer);
+		// the word is scored against an anagram after the halfway point in a switcharoo round
+		const result = scoreGuess(
+			guess,
+			// since the current guess is not added to game.guesses until after this step,
+			// we need to add one to the guesses length to get the correct guess number to compare against
+			game.mode === "switcharoo" && game.guesses.length + 1 > SWITCHES_AFTER
+				? game.anagram
+				: game.answer,
+		);
 		game.guesses.push({ word: guess, result });
 
 		// Did the game end?
@@ -232,21 +304,52 @@ export const submitGuess = async (req, res) => {
 			game.status = "lost";
 		}
 
+		const response = { result, status: game.status };
+
 		// Inserting a logged-in user's attempt in the database, win or lose (guests aren't saved).
-		if (game.status !== "playing" && req.user) {
-			await pool.query(
-				`INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses)
-				VALUES ($1, $2, 'classic', $3, $4, $5)
-				ON CONFLICT (solver_id, wordle_id, mode) DO NOTHING`,
-				[req.user.id, game.wordleId, game.startedAt, won ? new Date() : null, game.guesses.length],
-			);
+		// For Switcharoo mode, switched_word is only inserted in a Switcharoo game if the word actually switches during the game
+		// if the user guesses the word before the switch occurs, null will be inserted instead
+		// for all other modes, it is inserted as null
+
+		if (game.status !== "playing") {
+			// for clock mode, stop the clock the moment the server confirms the game is over
+			const endedAt = new Date();
+			// startedAt may be a string: the session store saves it as JSON
+			response.timeMs = endedAt - new Date(game.startedAt);
+			response.answer = game.answer;
+
+			if (req.user) {
+				await pool.query(
+					`INSERT INTO solves (solver_id, wordle_id, mode, started_at, solved_at, num_of_guesses, switched_word)
+									VALUES ($1, $2, $7, $3, $4, $5, $6)
+									ON CONFLICT (solver_id, wordle_id, mode) DO NOTHING`,
+					[
+						req.user.id,
+						game.wordleId,
+						game.startedAt,
+						won && game.mode === "clock" ? endedAt : won ? new Date() : null,
+						game.guesses.length,
+						// === TODO ===
+						// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
+						game.mode === "switcharoo" && game.guesses.length > SWITCHES_AFTER
+							? game.anagram
+							: null,
+						game.mode,
+					],
+				);
+			}
 		}
 
-		const response = { result, status: game.status };
 		if (game.status !== "playing") {
-			response.answer = game.answer;
+			// the answer for the game changes depending on if the word switches during switcharoo mode
+			// === TODO ===
+			// to adapt it to work in all modes, add an additional check to see if mode === "switcharoo"
+			response.answer =
+				game.mode === "switcharoo" && game.guesses.length > SWITCHES_AFTER
+					? game.anagram
+					: game.answer;
 		}
-		res.json(response);
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
