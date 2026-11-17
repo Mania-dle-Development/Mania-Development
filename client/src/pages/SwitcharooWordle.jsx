@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
-import SwitcharooBoard from "../components/SwitcharooBoard";
+import Board from "../components/Board";
 import Keyboard from "../components/Keyboard";
 
 // Container: gets everything from useWordle and passes it down to the presenters
@@ -34,11 +34,12 @@ export default function SwitcharooWordle() {
 			<div className="relative min-h-screen flex flex-col items-center gap-4 py-16 isolate">
 				<title>Switcharoo | Mania-dle</title>
 				<div className="absolute top-0 bottom-0 min-h-screen w-full lg:w-3xl bg-[#0014280D] pointer-events-none -z-10" />
-				<SwitcharooBoard
+				<Board
 					guesses={guesses}
 					currentGuess={currentGuess}
 					length={length}
 					maxGuesses={MAX_GUESSES}
+					switcharoo
 				/>
 				{/* messages */}
 				<div className="h-7 text-center">
