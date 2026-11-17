@@ -5,7 +5,8 @@ import fs from "fs"
 
 const csvPath = new URL("../data/valid_solutions.csv", import.meta.url)
 
-const words = fs.readFileSync(csvPath, "utf8")
+// exported so reset.js can seed every solution into the wordles table
+export const words = fs.readFileSync(csvPath, "utf8")
     .split(/\r?\n/)
     .map((w) => w.trim().toLowerCase())
     .filter(Boolean); // skips blank lines in the file
