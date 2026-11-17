@@ -1,120 +1,163 @@
 import { pool } from "../config/database.js";
 
-const profile_info_query = () =>
-    `WITH games AS (
-        -- Every finished game by this user. A NULL solved_at means the game was lost.
+// Profile data for one user, returned as a single row.
+// $1 is the user's id. To test in psql, replace $1 with a real id.
+//
+// The query is built from small named blocks, top to bottom:
+//   1. games               every game the user played, numbered in play order
+//   2. totals              games played, games solved, solve rate
+//   3. current_streak      wins in a row since the last loss
+//   4. best_streak         longest run of wins ever
+//   5. guess_distribution  wins for each guess count (1-6), as JSON
+//   6. recent_games        the last 3 games played, as JSON
+// The final SELECT at the bottom only picks columns from those blocks.
+const profile_info_query = `
+    WITH
+    -- 1. GAMES
+    -- One row per game this user played, numbered 1, 2, 3... from oldest to newest.
+    -- A game with no solved_at was lost.
+    games AS (
         SELECT
+            ROW_NUMBER() OVER (ORDER BY s.started_at, s.wordle_id, s.mode) AS game_number,
             s.mode,
             s.started_at,
             s.solved_at,
             s.num_of_guesses,
             w.word,
-            (s.solved_at IS NOT NULL) AS won,
-            ROW_NUMBER() OVER (ORDER BY s.started_at, s.wordle_id, s.mode) AS rn
+            (s.solved_at IS NOT NULL) AS won
         FROM solves s
-                 JOIN wordles w ON w.id = s.wordle_id
+        JOIN wordles w ON w.id = s.wordle_id
         WHERE s.solver_id = $1
     ),
-
-    -- Gaps-and-islands: consecutive games with the same result share a group number.
-          grouped AS (
-              SELECT
-                  rn,
-                  won,
-                  rn - ROW_NUMBER() OVER (PARTITION BY won ORDER BY rn) AS grp
-              FROM games
-          ),
-
-          win_runs AS (
-              SELECT COUNT(*) AS len, MAX(rn) AS last_rn
-              FROM grouped
-              WHERE won
-              GROUP BY grp
-          ),
-
-          totals AS (
-              SELECT
-                  COUNT(*)                      AS played,
-                  COUNT(*) FILTER (WHERE won)   AS solved
-              FROM games
-          ),
-
-          streaks AS (
-              SELECT
-                  -- Current streak: the win run that ends on the user's most recent game, else 0.
-                  COALESCE(
-                          (SELECT len FROM win_runs WHERE last_rn = (SELECT MAX(rn) FROM games)),
-                          0
-                  ) AS current_streak,
-                  COALESCE((SELECT MAX(len) FROM win_runs), 0) AS best_streak
-          ),
-
-    -- One row per guess count 1-6, including buckets with zero wins.
-          distribution AS (
-              SELECT g.n AS guesses, COUNT(gm.rn) AS total
-              FROM generate_series(1, 6) AS g(n)
-                       LEFT JOIN games gm ON gm.won AND gm.num_of_guesses = g.n
-              GROUP BY g.n
-          ),
-
-          recent AS (
-              SELECT
-                  rn,
-                  word,
-                  mode,
-                  won,
-                  num_of_guesses,
-                  started_at,
-                  -- Clock solve time in whole seconds; NULL for non-clock games and clock losses.
-                  CASE
-                      WHEN mode = 'clock' AND won
-                          THEN ROUND(EXTRACT(EPOCH FROM (solved_at - started_at)))::int
-    END AS seconds
-  FROM games
-  ORDER BY rn DESC
-  LIMIT 3
-)
-
+ 
+    -- 2. TOTALS
+    -- Counts every game, counts the won ones, and works out the percentage.
+    totals AS (
+        SELECT
+            COUNT(*) AS played,
+            COUNT(*) FILTER (WHERE won) AS solved,
+            CASE
+                WHEN COUNT(*) = 0 THEN 0
+                ELSE FLOOR(100.0 * COUNT(*) FILTER (WHERE won) / COUNT(*))
+            END AS solve_rate
+        FROM games
+    ),
+ 
+    -- 3. CURRENT STREAK
+    -- Take the number of the last lost game and count how many games came after it.
+    -- Example: 8 games, last loss was game 7, so the streak is 8 - 7 = 1.
+    -- If the user never lost, the "last loss" is treated as game 0.
+    current_streak AS (
+        SELECT
+            COUNT(*) - COALESCE(MAX(game_number) FILTER (WHERE NOT won), 0) AS wins_in_a_row
+        FROM games
+    ),
+ 
+    -- 4. BEST STREAK
+    -- A winning streak is the stretch of games between two losses.
+    -- Step A: list the number of every lost game. Add a pretend loss before the
+    --         first game (number 0) and after the last game (total + 1), so the
+    --         first and last stretches are counted too.
+    -- Step B: the gap between each pair of neighbouring losses, minus 1, is how many
+    --         wins happened in between.
+    -- Step C: the best streak is the biggest gap.
+    -- Example: losses at games 3 and 7 out of 8 games gives 0, 3, 7, 9.
+    --          The gaps are 2, 3 and 1 wins, so the best streak is 3.
+    loss_numbers AS (
+        SELECT 0 AS loss_number
+        UNION ALL
+        SELECT game_number FROM games WHERE NOT won
+        UNION ALL
+        SELECT COUNT(*) + 1 FROM games
+    ),
+ 
+    wins_between_losses AS (
+        SELECT
+            loss_number - LAG(loss_number) OVER (ORDER BY loss_number) - 1 AS wins_in_a_row
+        FROM loss_numbers
+    ),
+ 
+    best_streak AS (
+        SELECT COALESCE(MAX(wins_in_a_row), 0) AS wins_in_a_row
+        FROM wins_between_losses
+    ),
+ 
+    -- 5. GUESS DISTRIBUTION
+    -- generate_series makes the numbers 1 to 6, so every guess count gets a row.
+    -- The LEFT JOIN keeps a row with 0 wins when nothing matches.
+    guess_counts AS (
+        SELECT
+            guess_options.guesses,
+            COUNT(games.game_number) AS total
+        FROM generate_series(1, 6) AS guess_options(guesses)
+        LEFT JOIN games
+            ON games.won
+            AND games.num_of_guesses = guess_options.guesses
+        GROUP BY guess_options.guesses
+    ),
+ 
+    -- Packs the six rows into a JSON list: [{ "guesses": 1, "total": 0 }, ...]
+    guess_distribution AS (
+        SELECT
+            json_agg(
+                json_build_object('guesses', guesses, 'total', total::int)
+                ORDER BY guesses
+            ) AS as_json
+        FROM guess_counts
+    ),
+ 
+    -- 6. RECENT GAMES
+    -- Takes the 3 newest games and packs them into a JSON list, newest first.
+    -- "seconds" is the solve time for won clock games, and null for everything else.
+    -- COALESCE returns an empty list when the user has no games.
+    recent_games AS (
+        SELECT
+            COALESCE(
+                json_agg(
+                    json_build_object(
+                        'word',     word,
+                        'mode',     mode,
+                        'won',      won,
+                        'guesses',  num_of_guesses,
+                        'seconds',  CASE
+                                        WHEN mode = 'clock' AND won
+                                        THEN ROUND(EXTRACT(EPOCH FROM (solved_at - started_at)))::int
+                                    END,
+                        'playedAt', started_at
+                    )
+                    ORDER BY game_number DESC
+                ),
+                '[]'::json
+            ) AS as_json
+        FROM (
+            SELECT *
+            FROM games
+            ORDER BY game_number DESC
+            LIMIT 3
+        ) AS last_three_games
+    )
+ 
+    -- FINAL RESULT
+    -- One row: the user's info plus the value from each block above.
     SELECT
         u.id,
         u.username,
         u.avatar,
         u.created_at,
-        t.played::int AS played,
-        t.solved::int AS solved,
-        CASE WHEN t.played = 0 THEN 0
-             ELSE ROUND(100.0 * t.solved / t.played)::int
-    END AS solve_rate,
-  st.current_streak::int AS current_streak,
-  st.best_streak::int    AS best_streak,
-  (
-    SELECT json_agg(
-             json_build_object('guesses', guesses, 'total', total::int)
-             ORDER BY guesses
-           )
-    FROM distribution
-  ) AS guess_distribution,
-  COALESCE(
-    (
-      SELECT json_agg(
-               json_build_object(
-                 'word',     word,
-                 'mode',     mode,
-                 'won',      won,
-                 'guesses',  num_of_guesses,
-                 'seconds',  seconds,
-                 'playedAt', started_at
-               )
-               ORDER BY rn DESC
-             )
-      FROM recent
-    ),
-    '[]'::json
-  ) AS recent_games
-FROM users u
-CROSS JOIN totals t
-CROSS JOIN streaks st
-WHERE u.id = $1;
+        totals.played::int                AS played,
+        totals.solved::int                AS solved,
+        totals.solve_rate::int            AS solve_rate,
+        current_streak.wins_in_a_row::int AS current_streak,
+        best_streak.wins_in_a_row::int    AS best_streak,
+        guess_distribution.as_json        AS guess_distribution,
+        recent_games.as_json              AS recent_games
+    FROM users u
+    CROSS JOIN totals
+    CROSS JOIN current_streak
+    CROSS JOIN best_streak
+    CROSS JOIN guess_distribution
+    CROSS JOIN recent_games
+    WHERE u.id = $1
 `
 
 export const getProfileInformation = async (req, res) => {
@@ -129,15 +172,18 @@ export const getProfileInformation = async (req, res) => {
         }
 
         //call the database and request user information
-        const { rows } = await pool.query(profile_info_query, [user_id])
+        const results = await pool.query(profile_info_query, [user_id])
 
-        //error
-        if (rows.length === 0) {
+        //define data
+        const rows = results.rows
+
+        //error if results is null, or rowCount and rows.length == 0
+        if (!results || (results.rowCount || rows.length) === 0) {
             return res.status(404).json({error:"User not found"})
         }
         //format data into JSON
         const user_info = rows[0]
-        res.json({
+        res.status(200).json({
             id: user_id,
             username: user_info.username,
             avatar: user_info.avatar,
