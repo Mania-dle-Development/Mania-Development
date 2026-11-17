@@ -183,7 +183,8 @@ export const startClockGame = (req, res) => {
 
 // shared by getRandomWordle and getWordleGame: saves a new game in the user's session
 // wordle needs { id, word, valid_anagrams }
-const startGame = (req, wordle, mode) => {
+// custom = true for custom wordles: their guesses skip the dictionary check (see submitGuess)
+const startGame = (req, wordle, mode, custom = false) => {
 	// immediately picking the anagram so we don't have to compute and store it later
 	const anagram =
 		mode === "switcharoo"
@@ -195,6 +196,7 @@ const startGame = (req, wordle, mode) => {
 		wordleId: wordle.id,
 		answer: wordle.word.toLowerCase(),
 		mode,
+		custom,
 		anagram, // for switcharoo, the anagram is saved in the cookie as well; null if not switcharoo
 		startedAt: mode === "clock" ? null : new Date(),
 		fetchedAt: Date.now(), // the earliest start time we'll accept from the frontend for clock mode
@@ -296,7 +298,7 @@ export const getWordleGame = async (req, res) => {
 
 		// note: a logged-in user can replay a wordle they already played,
 		// the replay just isn't saved (ON CONFLICT DO NOTHING in submitGuess)
-		startGame(req, wordle, mode);
+		startGame(req, wordle, mode, true)
 
 		res.status(200).json({ id: wordle.id, length: wordle.word.length });
 	} catch (error) {
@@ -323,7 +325,11 @@ export const submitGuess = async (req, res) => {
 			return res.status(400).json({ error: `Guess must be ${game.answer.length} letters` });
 		}
 
-		if (!VALID_GUESSES.has(guess)) {
+		// custom wordles can be any length (4-8) and any letters (ex: names), but our word list
+		// only has 5-letter words, so custom games accept any letters instead of checking the dictionary
+		if (game.custom) {
+			if (!/^[a-z]+$/.test(guess)) return res.status(400).json({ error: "Letters only" })
+		} else if (!VALID_GUESSES.has(guess)) {
 			return res.status(400).json({ error: "Not in word list" });
 		}
 
