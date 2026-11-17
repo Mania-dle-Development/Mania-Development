@@ -49,7 +49,7 @@ The original game of Wordle. A player tries to find an n-letter word (n being a 
 
 Users can create their own Wordle with custom words to share with other players. The user has the option to update or delete the Wordle after it is created.
 
-[gif goes here]
+<img width="700" alt="create2 0" src="https://github.com/user-attachments/assets/0ca59a79-a573-493e-a91c-64e4b683b2cf" />
 
 ### Player Profiles
 
@@ -73,7 +73,7 @@ Players who get stuck can reveal one correct letter, but it costs them a guess.
 
 Players can see a list of recently made custom Wordles and pick one to play. They can sort the list by newest or most played.
 
-[gif goes here]
+<img width="700" alt="Searching and sorting custom Wordles" src="https://github.com/user-attachments/assets/d83e9d03-ffe0-4e19-8e19-8eadbb4b8426" />
 
 ### [ADDITIONAL FEATURES GO HERE - ADD ALL FEATURES HERE IN THE FORMAT ABOVE; you will check these off and add gifs as you complete them]
 
