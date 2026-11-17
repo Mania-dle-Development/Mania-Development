@@ -181,6 +181,28 @@ export const startClockGame = (req, res) => {
 	res.status(200).json({ startedAt: game.startedAt });
 };
 
+// shared by getRandomWordle and getWordleGame: saves a new game in the user's session
+// wordle needs { id, word, valid_anagrams }
+const startGame = (req, wordle, mode) => {
+	// immediately picking the anagram so we don't have to compute and store it later
+	const anagram =
+		mode === "switcharoo"
+			? wordle.valid_anagrams[Math.floor(Math.random() * wordle.valid_anagrams.length)]
+			: null;
+
+	// (this is saved under the user's session data)
+	req.session.game = {
+		wordleId: wordle.id,
+		answer: wordle.word.toLowerCase(),
+		mode,
+		anagram, // for switcharoo, the anagram is saved in the cookie as well; null if not switcharoo
+		startedAt: mode === "clock" ? null : new Date(),
+		fetchedAt: Date.now(), // the earliest start time we'll accept from the frontend for clock mode
+		guesses: [],
+		status: "playing",
+	};
+};
+
 // GET /:mode/random -- Fetches a random wordle that can be played in the specified mode
 export const getRandomWordle = async (req, res) => {
 	try {
@@ -239,23 +261,42 @@ export const getRandomWordle = async (req, res) => {
 			return;
 		}
 
-		// immediately fetching anagram so don't have to compute and store later
-		const anagram =
-			mode === "switcharoo"
-				? wordle.valid_anagrams[Math.floor(Math.random() * wordle.valid_anagrams.length)]
-				: null;
+		startGame(req, wordle, mode);
 
-		// (This is saved under the user's session data)
-		req.session.game = {
-			wordleId: wordle.id,
-			answer: wordle.word.toLowerCase(),
-			mode,
-			anagram, // for switcharoo, the anagram is saved in the cookie as well; null if not switcharoo
-			startedAt: mode === "clock" ? null : new Date(),
-			fetchedAt: Date.now(), // the earliest start time we'll accept from the frontend for clock mode
-			guesses: [],
-			status: "playing",
-		};
+		res.status(200).json({ id: wordle.id, length: wordle.word.length });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
+
+// GET /:mode/:id starts a game for one specific CUSTOM wordle (shareable links)
+// default words stay random-only, so they can't be looked up by id
+// custom wordles are classic or clock only (no switcharoo)
+export const getWordleGame = async (req, res) => {
+	try {
+		const { mode, id } = req.params;
+
+		if (!["classic", "clock"].includes(mode))
+			return res.status(400).json({ error: "Mode must be either 'classic' or 'clock'" });
+
+		if (!/^\d+$/.test(id)) return res.status(400).json({ error: "Invalid Wordle id." });
+
+		// creator_id IS NOT NULL: only custom wordles can be played by id
+		const { rows } = await pool.query(
+			"SELECT id, word, mode FROM wordles WHERE id = $1 AND creator_id IS NOT NULL",
+			[id],
+		);
+		const wordle = rows[0];
+
+		if (!wordle) return res.status(404).json({ error: "Wordle not found." });
+
+		// a custom wordle can only be played in the mode its creator picked
+		if (wordle.mode !== mode)
+			return res.status(400).json({ error: `This Wordle can't be played in ${mode} mode.` });
+
+		// note: a logged-in user can replay a wordle they already played,
+		// the replay just isn't saved (ON CONFLICT DO NOTHING in submitGuess)
+		startGame(req, wordle, mode);
 
 		res.status(200).json({ id: wordle.id, length: wordle.word.length });
 	} catch (error) {
