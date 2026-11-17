@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
-import Board from "../components/Board";
-import Keyboard from "../components/Keyboard";
+import Board from "../components/Wordle/Board";
+import Keyboard from "../components/Wordle/Keyboard";
 
 // Container: gets everything from useWordle and passes it down to the presenters
 export default function SwitcharooWordle() {

@@ -65,7 +65,7 @@ export default function ModeButton({ mode }) {
 		// === TODO ===
 		// Update link once details are finalized
 		<button
-			onClick={() => navigate("/gallery")}
+			onClick={() => navigate("/wordles")}
 			className="group flex flex-row items-stretch cursor-pointer bg-[#0283B380] hover:bg-[#3ca1c580] rounded-[6.25rem] overflow-hidden w-full font-sans text-[1.25rem] md:text-[2rem] lg:text-[2.5rem] text-left"
 		>
 			<div className="flex flex-col justify-center px-10 md:px-12 lg:px-14 w-3/4 lg:w-[4/5] xl:w-[84%] bg-[#0283B3] group-hover:bg-[#3ca1c5] rounded-[6.25rem] py-4 lg:py-5 border-[5px] border-[#001428] text-white">

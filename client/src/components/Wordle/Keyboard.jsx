@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import BackspaceIcon from "./BackspaceIcon";
+import BackspaceIcon from "./BackspaceIcon.jsx";
 
 // the three rows on a keyboard below
 const ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];

@@ -5,6 +5,7 @@ import ClassicWordle from "./pages/ClassicWordle";
 import ClockWordle from "./pages/ClockWordle";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import ProfilePage from "./pages/Profile.jsx"
 import SwitcharooWordle from "./pages/SwitcharooWordle.jsx";
 import CreateWordle from "./pages/CreateWordle";
 import BrowseWordles from "./pages/BrowseWordles";
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
 				element: <ProtectedRoute />,
 				// protected routes
 				children: [
-					{ path: "profile", element: <div className="px-55">Profile Page</div> },
+					{ path: "profile", element: <ProfilePage/> },
 					{ path: "test", element: <p>Test Protected Route</p> },
 					{ path: "create", element: <CreateWordle /> },
 				],

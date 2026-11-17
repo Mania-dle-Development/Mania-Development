@@ -1,4 +1,4 @@
-import Header from "../components/Header.jsx";
+import Header from "../components/LandingPage/Header.jsx";
 import { useNavigate } from "react-router";
 
 export default function Login() {

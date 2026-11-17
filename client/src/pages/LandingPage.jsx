@@ -1,7 +1,9 @@
-import Header from "../components/Header.jsx";
+import Header from "../components/LandingPage/Header.jsx";
+import ModeButton from "../components/ModeButton.jsx";
+
 import ZigZagSeparator from "../assets/zig-zag-separator.svg";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import ModeButton from "../components/ModeButton.jsx";
+
 
 export default function LandingPage() {
 	const { user } = useAuth();
@@ -23,7 +25,7 @@ export default function LandingPage() {
 						<ModeButton mode="classic" />
 						<ModeButton mode="switcharoo" />
 						<ModeButton mode="clock" />
-						<ModeButton mode="gallery" />
+						<ModeButton mode="wordles" />
 					</div>
 				</div>
 			</div>

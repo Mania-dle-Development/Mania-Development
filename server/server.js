@@ -4,7 +4,8 @@ import passport from "passport";
 import session from "express-session";
 import { GitHub } from "./config/auth.js";
 import authRoutes from "./routes/auth.js";
-import wordleRoutes from "./routes/wordles.js";
+import wordleRoutes from "./routes/wordles.js"
+import profileRoute from "./routes/profile.js";
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.get("/", (req, res) => {
 // auth-related routes
 app.use("/api/auth", authRoutes);
 app.use("/api/wordles", wordleRoutes);
+app.use("/api/profile", profileRoute)
 
 const PORT = process.env.PORT || 3000;
 

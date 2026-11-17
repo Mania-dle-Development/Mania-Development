@@ -1,6 +1,6 @@
 import { Outlet, Navigate } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
-import LoadingState from "../components/LoadingState";
+import LoadingState from "./LandingPage/LoadingState.jsx";
 
 export default function ProtectedRoute() {
 	const { user, loading } = useAuth();

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle"
 import useStopwatch from "../hooks/useStopwatch"
-import Board from "../components/Board"
-import Keyboard from "../components/Keyboard"
-import Timer from "../components/Timer"
+import Board from "../components/Wordle/Board.jsx"
+import Keyboard from "../components/Wordle/Keyboard.jsx"
+import Timer from "../components/Wordle/Timer.jsx"
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`
 

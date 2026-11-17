@@ -1,2 +1,4 @@
 .env
+server/config/search_database.js
 node_modules
+.idea

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import WordleCard from "../components/WordleCard";
+import WordleCard from "../components/Wordle/WordleCard.jsx";
+
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`;
+
 
 export default function BrowseWordles() {
 	const [wordles, setWordles] = useState([]);
