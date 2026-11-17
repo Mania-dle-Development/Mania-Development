@@ -101,19 +101,33 @@ Classic Wordle with a twist. At some point during the game, the answer shuffles 
    ```
 3. Update `FRONTEND_URL` with the client URL.
 4. Setup a [Render](https://render.com/) PostgreSQL database and update all the relevant environment variables
-5. Setup a GitHub OAuth app for authentication and update all the relevant environment variables
-6. Generate a random session secret and assign it to the `SESSION_SECRET` environment variable
-7. Seed and populate the database with tables and default Wordles:
+
+   a. Create a new Postgres database under an existing project
+   
+   b. After the database is successfully created and live, scroll down to the `Connections` tab and copy over Hostname, Port, Database, Username, and Password into `.env`.
+   
+6. Setup a GitHub OAuth app for authentication and update all the relevant environment variables
+
+   a. Navigate to `Settings` on a GitHub account or GitHub organization.
+
+   b. Open `Developer Settings` and go to `OAuth Apps`.
+
+   c. Register a new OAuth app and fill in the relevant information.
+
+   d. Copy over the client id, client secret and redirect URI into `.env`.
+
+8. Generate a random session secret and assign it to the `SESSION_SECRET` environment variable
+9. Seed and populate the database with tables and default Wordles:
    ```
    npm run reset
    ```
-8. Start the server:
-   ```
-   npm start
-   ```
+10. Start the server:
+    ```
+    npm start
+    ```
 
 ### Frontend Setup
-1.  Navigate into the [client](/client) directory and install all relevant dependencies:
+1. Navigate into the [client](/client) directory and install all relevant dependencies:
    ```
    cd client && npm install
    ```
@@ -127,7 +141,7 @@ Classic Wordle with a twist. At some point during the game, the answer shuffles 
    // Development
    npm run dev
 
-   // Production
+   // Production Build
    npm run build
 
    // Test Production Build
