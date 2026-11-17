@@ -120,7 +120,13 @@ WHERE u.id = $1;
 export const getProfileInformation = async (req, res) => {
     try {
         //get the userid
-        const user_id = req.user.id
+        const user_id = req.user?.id
+
+        //add check for user_id
+        if (!user_id) {
+            console.error("Profile Error: req.user is missing. Potential middleware auth issue on route")
+            return res.status(401).json({error:"User not logged In"})
+        }
 
         //call the database and request user information
         const { rows } = await pool.query(profile_info_query, [user_id])
