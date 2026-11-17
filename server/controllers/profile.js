@@ -121,7 +121,7 @@ const profile_info_query = `
                         'guesses',  num_of_guesses,
                         'seconds',  CASE
                                         WHEN mode = 'clock' AND won
-                                        THEN ROUND(EXTRACT(EPOCH FROM (solved_at - started_at)))::int
+                                        THEN FLOOR(EXTRACT(EPOCH FROM (solved_at - started_at)))::int
                                     END,
                         'playedAt', started_at
                     )
