@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 
 // rules for each game mode
 const RULES = {
@@ -72,9 +73,12 @@ export default function HowToPlayModal({ mode }) {
 		return () => window.removeEventListener("keydown", onKey, true)
 	}, [open, onClose])
 
+	// createPortal renders into <body>, so a parent's stacking context
+	// (like Switcharoo's "isolate" wrapper) can't push the modal under the sidebar
+
 	// when closed, show a "?" button so players can reopen the rules anytime
 	if (!open) {
-		return (
+		return createPortal(
 			<button
 				onClick={() => setOpen(true)}
 				aria-label="How to play"
@@ -82,11 +86,12 @@ export default function HowToPlayModal({ mode }) {
 				className="fixed top-5 right-5 z-40 cursor-pointer size-12 rounded-full bg-white border-[3px] border-text text-text text-2xl font-bold hover:brightness-95 active:translate-y-0.5 transition"
 			>
 				?
-			</button>
+			</button>,
+			document.body
 		)
 	}
 
-	return (
+	return createPortal(
 		// dark background, clicking it closes the modal
 		<div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4" onClick={onClose}>
 			<div
@@ -112,6 +117,7 @@ export default function HowToPlayModal({ mode }) {
 					Close
 				</button>
 			</div>
-		</div>
+		</div>,
+		document.body
 	)
 }

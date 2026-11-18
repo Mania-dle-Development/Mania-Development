@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { createPortal } from "react-dom"
 
 // pops up when the player wins; detail = extra line like "Solved in 4 guesses"
 export default function WinModal({ detail, onClose }) {
@@ -9,7 +10,8 @@ export default function WinModal({ detail, onClose }) {
 		return () => window.removeEventListener("keydown", onKey)
 	}, [onClose])
 
-	return (
+	// createPortal renders into <body> so the modal always sits above the sidebar
+	return createPortal(
 		// dark background, clicking it closes the modal
 		<div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4" onClick={onClose}>
 			<div
@@ -29,6 +31,7 @@ export default function WinModal({ detail, onClose }) {
 					Close
 				</button>
 			</div>
-		</div>
+		</div>,
+		document.body
 	)
 }
