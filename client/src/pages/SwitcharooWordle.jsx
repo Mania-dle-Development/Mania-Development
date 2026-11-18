@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import HowToPlayModal from "../components/Wordle/HowToPlayModal.jsx"
+import WinModal from "../components/Wordle/WinModal.jsx"
+import { useEffect, useState } from "react";
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
 import Board from "../components/Wordle/Board";
 import Keyboard from "../components/Wordle/Keyboard";
 
-// Container: gets everything from useWordle and passes it down to the presenters
+// gets everything from useWordle and passes it down to the presenters
 export default function SwitcharooWordle() {
 	const {
 		guesses,
@@ -22,6 +24,9 @@ export default function SwitcharooWordle() {
 		window.scrollTo(0, 0);
 	}, []);
 
+	const [showHelp, setShowHelp] = useState(true) // opens the how-to-play modal when the game loads
+	const [showWin, setShowWin] = useState(true) // win modal shows once status is "won", until closed
+
 	return (
 		<>
 			{status === "playing" && guesses.length === Math.ceil(MAX_GUESSES / 2) && (
@@ -33,6 +38,10 @@ export default function SwitcharooWordle() {
 			)}
 			<div className="relative min-h-screen flex flex-col items-center gap-4 py-16 isolate">
 				<title>Switcharoo | Mania-dle</title>
+				{showHelp && <HowToPlayModal mode="switcharoo" onClose={() => setShowHelp(false)} />}
+				{status === "won" && showWin && (
+					<WinModal detail={`Solved in ${guesses.length} ${guesses.length === 1 ? "guess" : "guesses"}`} onClose={() => setShowWin(false)} />
+				)}
 				<div className="absolute top-0 bottom-0 min-h-screen w-full lg:w-3xl bg-[#0014280D] pointer-events-none -z-10" />
 				<Board
 					guesses={guesses}
