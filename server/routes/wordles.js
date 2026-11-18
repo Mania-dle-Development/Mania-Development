@@ -4,6 +4,7 @@ import {
 	getWordles,
 	getMyWordles,
 	getWordleById,
+	getLeaderboard,
 	createWordle,
 	updateWordle,
 	deleteWordle,
@@ -16,10 +17,12 @@ import {
 const router = express.Router();
 
 // `/clock/:id/start` starts the timer for clock mode
+// `/:id/leaderboard` gets the leaderboard for one wordle (must come BEFORE /:mode/:id)
 // `/:mode/random` to fetch a random wordle for that specific mode
 // `/:mode/:id` to start a game for one specific wordle (must come AFTER /:mode/random)
 // `/:id/guesses` to submit a guess for a wordle game (mode is saved in session data)
 router.post("/clock/:id/start", startClockGame);
+router.get("/:id/leaderboard", getLeaderboard);
 router.get("/:mode/random", getRandomWordle);
 router.get("/:mode/:id", getWordleGame);
 router.post("/:id/guesses", submitGuess);

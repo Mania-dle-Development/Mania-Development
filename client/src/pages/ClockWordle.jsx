@@ -7,6 +7,7 @@ import useStopwatch from "../hooks/useStopwatch"
 import Board from "../components/Wordle/Board.jsx"
 import Keyboard from "../components/Wordle/Keyboard.jsx"
 import Timer from "../components/Wordle/Timer.jsx"
+import Leaderboard from "../components/Wordle/Leaderboard.jsx"
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`
 
@@ -75,6 +76,7 @@ export default function ClockWordle() {
 						disabled={submitting || status !== "playing"}
 					/>
 				</div>
+				<Leaderboard wordleId={wordleId} mode="clock" gameOver={status === "won" || status === "lost"} />
 			</div>
 		</div>
 	)

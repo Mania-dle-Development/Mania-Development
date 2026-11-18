@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
 import Board from "../components/Wordle/Board";
 import Keyboard from "../components/Wordle/Keyboard";
+import Leaderboard from "../components/Wordle/Leaderboard";
 
 // gets everything from useWordle and passes it down to the presenters
 export default function SwitcharooWordle() {
 	const {
+		wordleId,
 		guesses,
 		currentGuess,
 		length,
@@ -63,6 +65,7 @@ export default function SwitcharooWordle() {
 					disabled={submitting || status !== "playing"}
 					bg
 				/>
+				<Leaderboard wordleId={wordleId} mode="switcharoo" gameOver={status === "won" || status === "lost"} />
 			</div>
 		</>
 	);

@@ -409,3 +409,50 @@ export const submitGuess = async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 };
+
+/* ---------- leaderboard ---------- */
+
+// GET /api/wordles/:id/leaderboard?mode=classic
+// top 10 players who solved this wordle in this mode, plus the logged-in user's spot if they're lower
+export const getLeaderboard = async (req, res) => {
+	const { id } = req.params;
+	const { mode } = req.query;
+
+	if (!/^\d+$/.test(id)) return res.status(400).json({ error: "Invalid Wordle id." });
+	if (!MODES.includes(mode)) return res.status(400).json({ error: "Mode must be classic, clock, or switcharoo." });
+
+	// clock ranks by fastest time; classic and switcharoo rank by fewest guesses (time breaks ties)
+	const order =
+		mode === "clock"
+			? "(s.solved_at - s.started_at) ASC, s.num_of_guesses ASC"
+			: "s.num_of_guesses ASC, (s.solved_at - s.started_at) ASC";
+
+	try {
+		const found = await pool.query("SELECT 1 FROM wordles WHERE id = $1", [id]);
+		if (found.rows.length === 0) return res.status(404).json({ error: "Wordle not found." });
+
+		const { rows } = await pool.query(
+			`WITH ranked AS (
+				SELECT s.solver_id, u.username, s.num_of_guesses AS guesses,
+				       (EXTRACT(EPOCH FROM (s.solved_at - s.started_at)) * 1000)::int AS time_ms,
+				       ROW_NUMBER() OVER (ORDER BY ${order}) AS rank,
+				       COUNT(*) OVER () AS total
+				FROM solves s
+				JOIN users u ON u.id = s.solver_id
+				WHERE s.wordle_id = $1 AND s.mode = $2 AND s.solved_at IS NOT NULL
+			)
+			SELECT rank::int, username, guesses, time_ms, total::int,
+			       COALESCE(solver_id = $3, false) AS is_me
+			FROM ranked
+			WHERE rank <= 10 OR solver_id = $3
+			ORDER BY rank`,
+			[id, mode, req.user?.id ?? null],
+		);
+
+		const total = rows[0]?.total ?? 0;
+		const players = rows.map(({ total, ...player }) => player);
+		res.status(200).json({ wordleId: Number(id), mode, total, players });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+};
