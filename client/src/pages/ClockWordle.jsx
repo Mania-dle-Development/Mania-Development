@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useParams } from "react-router"
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle"
 import useStopwatch from "../hooks/useStopwatch"
 import Board from "../components/Wordle/Board.jsx"
@@ -9,8 +10,9 @@ const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`
 
 // same game as Classic (useWordle hook) + a stopwatch that times how long you take
 export default function ClockWordle() {
+	const { id } = useParams() // /clock/50 loads id "50" (custom wordle), /clock is undefined (random Clock wordle)
 	const { wordleId, guesses, currentGuess, length, status, answer, timeMs, error, submitting, handleKey, keyStatuses } =
-		useWordle("clock")
+		useWordle("clock", id)
 
 	const [started, setStarted] = useState(false)
 
