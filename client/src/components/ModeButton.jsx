@@ -1,6 +1,6 @@
 import SwitcharooIcon from "../assets/switcharoo-icon-bw.svg";
 import ClockIcon from "../assets/clock-icon-bw.svg";
-import GalleryIcon from "../assets/gallery-icon-bw.svg";
+import GalleryIcon from "../assets/gallery-icon-2-bw.svg";
 import { useNavigate } from "react-router";
 
 export default function ModeButton({ mode }) {
