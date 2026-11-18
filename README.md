@@ -2,7 +2,7 @@
 
 CodePath WEB103 Final Project
 
-Designed and developed by: Christian Gomez Diaz, Phillipe Manio, Evelyn Rodriguez, Jay Wageni, Vanessa Tang
+Designed and developed by: Phillipe Manio, Evelyn Rodriguez, Jay Wageni, Vanessa Tang
 
 🔗 Link to deployed app: N/A
 
@@ -53,7 +53,7 @@ Users can create their own Wordle with custom words to share with other players.
 
 ### Player Profiles
 
-Players can create an account to track their stats including total games played, which Wordles they have solved so far, and all the custom Wordles they have created. They can also personalize their profile to showcase their favorite word and their favorite Wordle mode.
+Players can create an account to track their stats including total games played, which Wordles they have solved so far, their current streak, their best streak, their guess distribution, and recently played Wordles.
 
 ![Profile_Page.gif](planning/src/Profile_Page.gif)
 
@@ -75,8 +75,6 @@ Players can see a list of recently made custom Wordles and pick one to play. The
 
 <img width="700" alt="Searching and sorting custom Wordles" src="https://github.com/user-attachments/assets/d83e9d03-ffe0-4e19-8e19-8eadbb4b8426" />
 
-### [ADDITIONAL FEATURES]
-
 ### Clock Mode
 
 A timed version of Wordle. A stopwatch starts on your first letter and times how fast you solve the puzzle.
@@ -91,6 +89,67 @@ Classic Wordle with a twist. At some point during the game, the answer shuffles 
 
 ## Installation Instructions
 
-[instructions go here]
+### Backend Setup
 
+1. Navigate into the [server](/server) directory and install all relevant dependencies:
+   ```
+   cd server && npm install
+   ```
+2. Create a `.env` file for backend environment variables using [/server/.env.example](/server/.env.example):
+   ```
+   cp .env.example .env
+   ```
+3. Update `FRONTEND_URL` with the client URL.
+4. Setup a [Render](https://render.com/) PostgreSQL database and update all the relevant environment variables
+
+   a. Create a new Postgres database under an existing project
+   
+   b. After the database is successfully created and live, scroll down to the `Connections` tab and copy over Hostname, Port, Database, Username, and Password into `.env`.
+   
+6. Setup a GitHub OAuth app for authentication and update all the relevant environment variables
+
+   a. Navigate to `Settings` on a GitHub account or GitHub organization.
+
+   b. Open `Developer Settings` and go to `OAuth Apps`.
+
+   c. Register a new OAuth app and fill in the relevant information (Redirect URI should end with `/api/auth/github/callback`).
+
+   d. Copy over the client id, client secret and redirect URI into `.env`.
+
+8. Generate a random session secret and assign it to the `SESSION_SECRET` environment variable
+9. Seed and populate the database with tables and default Wordles:
+   ```
+   npm run reset
+   ```
+10. Start the server:
+    ```
+    npm start
+    ```
+
+### Frontend Setup
+1. Navigate into the [client](/client) directory and install all relevant dependencies:
+   ```
+   cd client && npm install
+   ```
+2. Create a `.env` file for frontend environment variables using [/client/.env.example](/client/.env.example):
+   ```
+   cp .env.example .env
+   ```
+3. Update `VITE_BACKEND_URL` with the server URL.
+4. Start the server:
+
+   a. To run the development server:
+   ```
+   npm run dev
+   ```
+
+   b. To make a production build:
+   ```
+   npm run build
+   ```
+
+   c. To test a production build locally:
+   ```
+   npm run preview
+   ```
 
