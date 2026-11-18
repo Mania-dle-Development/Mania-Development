@@ -112,7 +112,7 @@ Classic Wordle with a twist. At some point during the game, the answer shuffles 
 
    b. Open `Developer Settings` and go to `OAuth Apps`.
 
-   c. Register a new OAuth app and fill in the relevant information.
+   c. Register a new OAuth app and fill in the relevant information (Redirect URI should end with `/api/auth/github/callback`).
 
    d. Copy over the client id, client secret and redirect URI into `.env`.
 
@@ -137,14 +137,19 @@ Classic Wordle with a twist. At some point during the game, the answer shuffles 
    ```
 3. Update `VITE_BACKEND_URL` with the server URL.
 4. Start the server:
+
+   a. To run the development server:
    ```
-   // Development
    npm run dev
+   ```
 
-   // Production Build
+   b. To make a production build:
+   ```
    npm run build
+   ```
 
-   // Test Production Build
+   c. To test a production build locally:
+   ```
    npm run preview
    ```
 
