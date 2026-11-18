@@ -5,26 +5,27 @@ const RULES = {
 	classic: {
 		title: "Classic",
 		steps: [
-			"Guess the hidden word in 6 tries.",
-			"Green = right letter, right spot.",
-			"Yellow = right letter, wrong spot.",
-			"Gray = letter isn't in the word.",
+			"Try to guess the hidden word in 6 tries.",
+			"Green = you got the right letter in the right spot.",
+			"Yellow = you got the right letter in the wrong spot.",
+			"Gray = this letter isn't in the word sadly.",
 		],
 	},
 	clock: {
 		title: "Clock",
 		steps: [
-			"Same rules as Classic.",
-			"The stopwatch starts on your first key press.",
-			"Solve it as fast as you can to climb the leaderboard.",
+			"This game has the same rules as Classic Mode!",
+			"There's a stopwatch that starts on your first key press.",
+			"Try to solve it as fast as you can to climb the leaderboard.",
 		],
 	},
 	switcharoo: {
 		title: "Switcharoo",
 		steps: [
-			"Same rules as Classic.",
-			"Halfway through your guesses, the word switches!",
-			"Use your new clues to find the new word.",
+			"This game has the same rules as Classic Mode!",
+			"Halfway through your guesses, the word switches.",
+			"The letters stay the same, but the word is different",
+			"Use what you know to find the anagram.",
 		],
 	},
 }
