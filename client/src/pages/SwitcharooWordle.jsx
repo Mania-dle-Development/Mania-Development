@@ -24,7 +24,6 @@ export default function SwitcharooWordle() {
 		window.scrollTo(0, 0);
 	}, []);
 
-	const [showHelp, setShowHelp] = useState(true) // opens the how-to-play modal when the game loads
 	const [showWin, setShowWin] = useState(true) // win modal shows once status is "won", until closed
 
 	return (
@@ -38,7 +37,7 @@ export default function SwitcharooWordle() {
 			)}
 			<div className="relative min-h-screen flex flex-col items-center gap-4 py-16 isolate">
 				<title>Switcharoo | Mania-dle</title>
-				{showHelp && <HowToPlayModal mode="switcharoo" onClose={() => setShowHelp(false)} />}
+				<HowToPlayModal mode="switcharoo" />
 				{status === "won" && showWin && (
 					<WinModal detail={`Solved in ${guesses.length} ${guesses.length === 1 ? "guess" : "guesses"}`} onClose={() => setShowWin(false)} />
 				)}

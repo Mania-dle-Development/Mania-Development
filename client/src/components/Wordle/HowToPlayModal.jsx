@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 // rules for each game mode
 const RULES = {
@@ -29,19 +29,61 @@ const RULES = {
 	},
 }
 
-export default function HowToPlayModal({ mode, onClose }) {
+// remembers (per browser) which modes the player has already seen the rules for.
+// try/catch because localStorage can throw (private browsing, blocked storage)
+const storageKey = (mode) => `seenHowToPlay-${mode}`
+
+function hasSeen(mode) {
+	try {
+		return localStorage.getItem(storageKey(mode)) === "true"
+	} catch {
+		return false
+	}
+}
+
+function markSeen(mode) {
+	try {
+		localStorage.setItem(storageKey(mode), "true")
+	} catch {
+		// storage blocked: the modal just shows again next time
+	}
+}
+
+// shows only the first time a player opens each mode
+export default function HowToPlayModal({ mode }) {
 	const { title, steps } = RULES[mode]
+	const [open, setOpen] = useState(() => !hasSeen(mode))
+
+	const onClose = useCallback(() => {
+		markSeen(mode)
+		setOpen(false)
+	}, [mode])
 
 	// capture phase (the "true") runs before useWordle's keydown listener,
 	// so keys typed while the modal is open don't reach the game
 	useEffect(() => {
+		if (!open) return
 		const onKey = (e) => {
 			e.stopImmediatePropagation()
 			if (e.key === "Escape" || e.key === "Enter") onClose()
 		}
 		window.addEventListener("keydown", onKey, true)
 		return () => window.removeEventListener("keydown", onKey, true)
-	}, [onClose])
+	}, [open, onClose])
+
+	// when closed, show a "?" button so players can reopen the rules anytime
+	if (!open) {
+		return (
+			<button
+				onClick={() => setOpen(true)}
+				aria-label="How to play"
+				title="How to play"
+				className="fixed top-5 right-5 z-40 cursor-pointer size-12 rounded-full bg-white border-[3px] border-text text-text text-2xl font-bold hover:brightness-95 active:translate-y-0.5 transition"
+			>
+				?
+			</button>
+		)
+	}
 
 	return (
 		// dark background, clicking it closes the modal

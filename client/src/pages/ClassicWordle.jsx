@@ -12,13 +12,12 @@ export default function ClassicWordle() {
 	const { guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
 		useWordle("classic", id)
 
-	const [showHelp, setShowHelp] = useState(true) // opens the how-to-play modal when the game loads
 	const [showWin, setShowWin] = useState(true) // win modal shows once status is "won", until closed
 
 	return (
 		<div className="min-h-screen max-w-3xl mx-auto bg-board flex flex-col items-center gap-8 py-16">
 			<title>Classic | Mania-dle</title>
-			{showHelp && <HowToPlayModal mode="classic" onClose={() => setShowHelp(false)} />}
+			<HowToPlayModal mode="classic" />
 			{status === "won" && showWin && (
 				<WinModal detail={`Solved in ${guesses.length} ${guesses.length === 1 ? "guess" : "guesses"}`} onClose={() => setShowWin(false)} />
 			)}
