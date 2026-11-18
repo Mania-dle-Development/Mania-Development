@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router";
+import KeyById from "./components/KeyById.jsx"
 import AppLayout from "./layouts/AppLayout";
 import Login from "./pages/Login";
 import ClassicWordle from "./pages/ClassicWordle";
@@ -24,8 +25,9 @@ export const router = createBrowserRouter([
 				],
 			},
 			// game pages: guests can play, only logged-in users' solves are saved
-			{ path: "classic", element: <ClassicWordle /> },
-			{ path: "clock", element: <ClockWordle /> },
+			// :id? is optional. /classic loads random default word, /classic/42 loads custom wordle #42
+			{ path: "classic/:id?", element: <KeyById page={ClassicWordle} /> },
+			{ path: "clock/:id?", element: <KeyById page={ClockWordle} /> },
 			{ path: "switcharoo", element: <SwitcharooWordle /> },
 			// non-protected routes with sidebar menu (pages accessible to guest)
 			{
