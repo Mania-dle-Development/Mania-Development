@@ -9,6 +9,9 @@ import profileRoute from "./routes/profile.js";
 
 const app = express();
 
+//allows HTTPS requests
+app.set('trust proxy', 1)
+
 app.use(express.json());
 // set up session middleware
 app.use(
@@ -16,6 +19,10 @@ app.use(
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: true,
+		cookie: {
+			sameSite: 'none',
+			secure: true
+		}
 	}),
 );
 
