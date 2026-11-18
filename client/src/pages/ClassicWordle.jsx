@@ -1,10 +1,11 @@
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
 import Board from "../components/Wordle/Board.jsx";
 import Keyboard from "../components/Wordle/Keyboard.jsx";
+import Leaderboard from "../components/Wordle/Leaderboard.jsx";
 
 // Container: gets everything from useWordle and passes it down to the presenters
 export default function ClassicWordle() {
-	const { guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
+	const { wordleId, guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
 		useWordle();
 
 	return (
@@ -24,6 +25,7 @@ export default function ClassicWordle() {
 				keyStatuses={keyStatuses}
 				disabled={submitting || status !== "playing"}
 			/>
+			<Leaderboard wordleId={wordleId} mode="classic" gameOver={status === "won" || status === "lost"} />
 		</div>
 	);
 }

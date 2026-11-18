@@ -4,6 +4,7 @@ import {
 	getWordles,
 	getMyWordles,
 	getWordleById,
+	getLeaderboard,
 	createWordle,
 	updateWordle,
 	deleteWordle,
@@ -28,5 +29,8 @@ router.get("/:id", getWordleById);
 router.post("/", requireAuth, createWordle);
 router.patch("/:id", requireAuth, updateWordle);
 router.delete("/:id", requireAuth, deleteWordle);
+
+// leaderboard for one wordle: /:id/leaderboard?mode=classic
+router.get("/:id/leaderboard", getLeaderboard);
 
 export default router;
