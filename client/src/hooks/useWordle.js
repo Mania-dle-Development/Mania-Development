@@ -3,7 +3,8 @@ import { useState, useEffect, useMemo } from "react";
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/wordles`;
 export const MAX_GUESSES = 6;
 
-export default function useWordle(mode = "classic") {
+// id is optional: with an id it plays that custom wordle, without one it plays a random default word
+export default function useWordle(mode = "classic", id) {
 	// -- states --
 	const [wordleId, setWordleId] = useState(null);
 	const [length, setLength] = useState(5);
@@ -28,7 +29,7 @@ export default function useWordle(mode = "classic") {
 
 		const startGame = async () => {
 			try {
-				const res = await fetch(`${API}/${mode}/random`, { credentials: "include" });
+				const res = await fetch(`${API}/${mode}/${id ?? "random"}`, { credentials: "include" })
 				const data = await res.json();
 				if (ignore) return;
 
@@ -50,8 +51,7 @@ export default function useWordle(mode = "classic") {
 		return () => {
 			ignore = true;
 		};
-	}, [mode]);
-
+	}, [mode, id])
 	const submitGuess = async () => {
 		if (currentGuess.length !== length) {
 			setError(`Guess must be ${length} letters`);
