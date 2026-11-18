@@ -3,10 +3,11 @@ import { useNavigate } from "react-router";
 import LogoutIcon from "../assets/logout-icon.svg";
 import SwitcharooIcon from "../assets/switcharoo-icon.svg";
 import ClockModeIcon from "../assets/clock-icon.svg";
-import HintIcon from "../assets/hint-icon.svg";
-import LeaderboardIcon from "../assets/leaderboard-icon.svg";
-import CustomWordleIcon from "../assets/custom-wordle-icon.svg";
+import HomeIcon from "../assets/home-icon.svg";
+import CustomWordleIcon2 from "../assets/custom-wordle-icon_2.svg";
+import ClassicWordleIcon from "../assets/classic-wordle-icon.svg";
 import ProfileIcon from "../assets/profile-icon.svg";
+import WordleGalleryIcon from "../assets/gallery-icon.svg";
 
 export default function SidebarMenu() {
 	const { user, logout } = useAuth();
@@ -22,30 +23,28 @@ export default function SidebarMenu() {
 					>
 						<img src={ProfileIcon} />
 					</button>
-					{/* === TODO === */}
-					{/* Update onclick function to open leaderboard modal */}
+					{/*new-wordle-icon*/}
 					<button
-						onClick={() => alert("Open leaderboard")}
+						onClick={() => navigate("/create")}
 						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(224,95,142,0.15),rgba(224,95,142,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(224,95,142,0.3),rgba(224,95,142,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
 					>
-						<img src={LeaderboardIcon} />
+						<img src={CustomWordleIcon2} />
 					</button>
-					{/* === TODO === */}
-					{/* Update onclick function to show a hint in a wordle game */}
+					{/* Home Button */}
 					<button
-						onClick={() => alert("Show hint")}
+						onClick={() => navigate("/")}
 						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(224,95,142,0.15),rgba(224,95,142,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(224,95,142,0.3),rgba(224,95,142,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
 					>
-						<img src={HintIcon} />
+						<img src={HomeIcon} />
 					</button>
 				</div>
 				{/* games */}
 				<div className="flex flex-col gap-1 bg-[linear-gradient(0deg,#FFF,#FFF),linear-gradient(0deg,rgba(97,224,95,0.05),rgba(97,224,95,0.05))] p-2.5 rounded-full">
 					<button
-						onClick={() => navigate("/create")}
+						onClick={() => navigate("/classic")}
 						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(218,99,59,0.15),rgba(218,99,59,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(218,99,59,0.3),rgba(218,99,59,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
 					>
-						<img src={CustomWordleIcon} />
+						<img src={ClassicWordleIcon} />
 					</button>
 					<button
 						onClick={() => navigate("/switcharoo")}
@@ -58,6 +57,12 @@ export default function SidebarMenu() {
 						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(218,99,59,0.15),rgba(218,99,59,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(218,99,59,0.3),rgba(218,99,59,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
 					>
 						<img src={ClockModeIcon} />
+					</button>
+					<button
+						onClick={() => navigate("/wordles")}
+						className="cursor-pointer size-20 rounded-full flex items-center justify-center bg-[linear-gradient(0deg,rgba(218,99,59,0.15),rgba(218,99,59,0.15)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))] hover:bg-[linear-gradient(0deg,rgba(218,99,59,0.3),rgba(218,99,59,0.3)),linear-gradient(0deg,rgba(0,20,40,0),rgba(0,20,40,0))]"
+					>
+						<img src={WordleGalleryIcon} />
 					</button>
 				</div>
 				{/* exit / logout */}
