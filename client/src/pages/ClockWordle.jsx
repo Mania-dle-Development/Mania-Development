@@ -1,3 +1,5 @@
+import HowToPlayModal from "../components/Wordle/HowToPlayModal.jsx"
+import WinModal from "../components/Wordle/WinModal.jsx"
 import { useState, useEffect } from "react"
 import { useParams } from "react-router"
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle"
@@ -16,6 +18,7 @@ export default function ClockWordle() {
 		useWordle("clock", id)
 
 	const [started, setStarted] = useState(false)
+	const [showWin, setShowWin] = useState(true) // win modal shows once status is "won", until closed
 
 	// start at the top of the page
 	useEffect(() => {
@@ -51,6 +54,8 @@ export default function ClockWordle() {
 	return (
 		<div className="min-h-screen bg-linear-to-b from-clock-top to-clock-bottom">
 			<title>Clock | Mania-dle</title>
+			<HowToPlayModal mode="clock" />
+			{status === "won" && showWin && <WinModal detail={`Solved in ${time}`} onClose={() => setShowWin(false)} />}
 			<div className="min-h-screen max-w-3xl mx-auto bg-text/5 flex flex-col items-center gap-6 py-12">
 				<Timer seconds={seconds} />
 

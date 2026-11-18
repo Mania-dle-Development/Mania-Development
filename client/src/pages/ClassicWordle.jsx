@@ -1,4 +1,7 @@
-import { useParams } from "react-router";
+import { useState } from "react"
+import HowToPlayModal from "../components/Wordle/HowToPlayModal.jsx"
+import WinModal from "../components/Wordle/WinModal.jsx"
+import { useParams } from "react-router"
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
 import Board from "../components/Wordle/Board.jsx";
 import Keyboard from "../components/Wordle/Keyboard.jsx";
@@ -10,9 +13,15 @@ export default function ClassicWordle() {
 	const { wordleId, guesses, currentGuess, length, status, answer, error, submitting, handleKey, keyStatuses } =
 		useWordle("classic", id);
 
+	const [showWin, setShowWin] = useState(true) // win modal shows once status is "won", until closed
+
 	return (
 		<div className="min-h-screen max-w-3xl mx-auto bg-board flex flex-col items-center gap-8 py-16">
 			<title>Classic | Mania-dle</title>
+			<HowToPlayModal mode="classic" />
+			{status === "won" && showWin && (
+				<WinModal detail={`Solved in ${guesses.length} ${guesses.length === 1 ? "guess" : "guesses"}`} onClose={() => setShowWin(false)} />
+			)}
 			<Board guesses={guesses} currentGuess={currentGuess} length={length} maxGuesses={MAX_GUESSES} />
 
 			{/* messages */}
