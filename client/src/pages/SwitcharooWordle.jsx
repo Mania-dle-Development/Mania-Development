@@ -1,5 +1,5 @@
-import HowToPlayModal from "../components/Wordle/HowToPlayModal.jsx"
-import WinModal from "../components/Wordle/WinModal.jsx"
+import HowToPlayModal from "../components/Wordle/HowToPlayModal.jsx";
+import WinModal from "../components/Wordle/WinModal.jsx";
 import { useEffect, useState } from "react";
 import useWordle, { MAX_GUESSES } from "../hooks/useWordle";
 import Board from "../components/Wordle/Board";
@@ -26,10 +26,17 @@ export default function SwitcharooWordle() {
 		window.scrollTo(0, 0);
 	}, []);
 
-	const [showWin, setShowWin] = useState(true) // win modal shows once status is "won", until closed
+	const [showWin, setShowWin] = useState(true); // win modal shows once status is "won", until closed
 
 	return (
 		<>
+			<HowToPlayModal mode="switcharoo" />
+			{status === "won" && showWin && (
+				<WinModal
+					detail={`Solved in ${guesses.length} ${guesses.length === 1 ? "guess" : "guesses"}`}
+					onClose={() => setShowWin(false)}
+				/>
+			)}
 			{status === "playing" && guesses.length === Math.ceil(MAX_GUESSES / 2) && (
 				<div className="absolute top-[35%] md:top-[45%] 2xl:top-2/5 left-1/2 -translate-x-1/2 translate-y-[-65%] md:translate-y-[-55%] 2xl:-translate-y-3/5 pointer-events-none z-50">
 					<span className="animate-pop-fade font-pixel text-6xl md:text-7xl lg:text-8xl font-bold text-white [-webkit-text-stroke:6px_#001428] md:[-webkit-text-stroke:8px_#001428] [paint-order:stroke_fill] text-shadow-lg text-shadow-black">
@@ -39,10 +46,6 @@ export default function SwitcharooWordle() {
 			)}
 			<div className="relative min-h-screen flex flex-col items-center gap-4 py-16 isolate">
 				<title>Switcharoo | Mania-dle</title>
-				<HowToPlayModal mode="switcharoo" />
-				{status === "won" && showWin && (
-					<WinModal detail={`Solved in ${guesses.length} ${guesses.length === 1 ? "guess" : "guesses"}`} onClose={() => setShowWin(false)} />
-				)}
 				<div className="absolute top-0 bottom-0 min-h-screen w-full lg:w-3xl bg-[#0014280D] pointer-events-none -z-10" />
 				<Board
 					guesses={guesses}
@@ -65,7 +68,11 @@ export default function SwitcharooWordle() {
 					disabled={submitting || status !== "playing"}
 					bg
 				/>
-				<Leaderboard wordleId={wordleId} mode="switcharoo" gameOver={status === "won" || status === "lost"} />
+				<Leaderboard
+					wordleId={wordleId}
+					mode="switcharoo"
+					gameOver={status === "won" || status === "lost"}
+				/>
 			</div>
 		</>
 	);
