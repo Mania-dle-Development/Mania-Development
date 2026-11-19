@@ -28,7 +28,7 @@ export default function Board({ guesses, currentGuess, length, maxGuesses, switc
 						<div className="py-1 flex items-center justify-center w-full">
 							<div
 								aria-hidden="true"
-								className="pointer-events-none absolute top-1/2 -mt-70 left-0 right-0 bottom-0 flex flex-col -z-20"
+								className="pointer-events-none absolute top-145 md:top-160 -mt-70 left-0 right-0 bottom-0 flex flex-col -z-20"
 							>
 								<img
 									src={SwitcharooSeparator}
