@@ -4,7 +4,7 @@ CodePath WEB103 Final Project
 
 Designed and developed by: Phillipe Manio, Evelyn Rodriguez, Jay Wageni, Vanessa Tang
 
-🔗 Link to deployed app: N/A
+🔗 Link to deployed app: https://mania-dle.onrender.com/
 
 ## About
 
@@ -38,42 +38,35 @@ Users can login and out of the app using their GitHub account. If times permits,
 [![User Authentication Vid](https://img.youtube.com/vi/zmJ1yjO0iks/0.jpg)](https://youtube.com/watch?v=zmJ1yjO0iks)
 
  
-### Classic Wordle
+### Classic Wordle ✅
 
 The original game of Wordle. A player tries to find an n-letter word (n being a positive integer) by trial and error. Each guess gives the player clues (what letters are in the word, the correct position of each valid letter, etc). Using these clues, they have to solve the puzzle in (n+1) rounds.
 
 [![Classic Wordle Vid](https://img.youtube.com/vi/FgN_HRkkX3A/0.jpg)](https://youtube.com/watch?v=FgN_HRkkX3A)
 
 
-### Custom Wordle Creator
+### Custom Wordle Creator✅
 
 Users can create their own Wordle with custom words to share with other players. The user has the option to update or delete the Wordle after it is created.
 
 <img width="700" alt="create2 0" src="https://github.com/user-attachments/assets/0ca59a79-a573-493e-a91c-64e4b683b2cf" />
 
 
-### Player Profiles
+### Player Profiles ✅
 
 Players can create an account to track their stats including total games played, which Wordles they have solved so far, their current streak, their best streak, their guess distribution, and recently played Wordles.
 
 ![Profile_Page.gif](planning/src/Profile_Page.gif)
 
 
-### Leaderboard
+### Leaderboard ✅
 
 Ranks players by stats like fastest solve time and total Wordles solved. Each custom Wordle also has its own leaderboard, so players can see who it solved it the fastest. There are leaderboards for other Wordle modes as well.
 
-[gif goes here]
+<img width="1280" height="646" alt="leaderboard-demo" src="https://github.com/user-attachments/assets/572c334d-7432-4447-aa5c-6c1ba7bb4e85" />
 
 
-### Clock Mode
-
-A timed version of Wordle. A stopwatch starts on your first letter and times how fast you solve the puzzle.
-
-<img width="700" alt="Clock Mode stopwatch" src="https://github.com/user-attachments/assets/5783cf6a-1a48-4470-a46c-3238a1bfbbc5" />
-
-
-### Browse Custom Wordles
+### Browse Custom Wordles ✅
 
 Players can see a list of recently made custom Wordles and pick one to play. They can sort the list by newest or most played.
 
@@ -81,17 +74,17 @@ Players can see a list of recently made custom Wordles and pick one to play. The
 
 ### [ADDITIONAL FEATURES]
 
-### Switcharoo Mode
+### Clock Mode ✅
+
+A timed version of Wordle. A stopwatch starts on your first letter and times how fast you solve the puzzle.
+
+<img width="700" alt="Clock Mode stopwatch" src="https://github.com/user-attachments/assets/5783cf6a-1a48-4470-a46c-3238a1bfbbc5" />
+
+### Switcharoo Mode ✅
 
 Classic Wordle with a twist. At some point during the game, the answer shuffles into an anagram of itself (for example, EARTH becomes HEART). The screen shows "Switcharoo!" when it happens. The game still has a total of 6 rounds.
 
 [![Switcharoo Wordle Vid](https://img.youtube.com/vi/pFmD6EHSelY/0.jpg)](https://youtube.com/watch?v=pFmD6EHSelY)
-
-### Hint Button
-
-Players who get stuck can reveal one correct letter, but it costs them a guess.
-
-[gif goes here]
 
 
 ## Installation Instructions
